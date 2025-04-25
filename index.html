@@ -5,11 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>Su Tesisleri Dairesi Başkanlığı Piezometre Hesaplama Tablosu</title>
   <style>
-    /* Sayfa üzerindeki tüm öğelere yakınlaştırmayı engelle */
     html, body {
-      touch-action: none;  /* Bu özellik mobil cihazlarda yakınlaştırmayı engeller */
+      touch-action: none;
     }
-
     body {
       font-family: sans-serif;
       padding: 1rem;
@@ -17,15 +15,15 @@
       margin: auto;
     }
     h2 {
-  text-align: center;   /* Başlığı ortalar */
-  color: #8B0000;       /* Başlık rengini değiştirmek için bu değeri dilediğiniz renkle değiştirebilirsiniz */
-  margin-bottom: 1rem;
-}
+      text-align: center;
+      color: #8B0000;
+      margin-bottom: 1rem;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
       margin-bottom: 1rem;
-      table-layout: fixed; /* Tabloyu sabitle */
+      table-layout: fixed;
     }
     th, td {
       border: 1px solid #ccc;
@@ -33,7 +31,7 @@
       text-align: center;
       word-wrap: break-word;
       white-space: normal;
-      overflow-wrap: break-word; /* Taşma olduğunda alt satıra geçsin */
+      overflow-wrap: break-word;
     }
     th {
       background-color: #f4f4f4;
@@ -61,20 +59,20 @@
       background-color: #006F8E;
     }
     select.boru,
-select.atu {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background-image: none;
-  width: 100%; /* Yüzde 100 genişlik */
-  max-width: 250px;
-  padding: 6px;
-  margin: 5px 0;
-  box-sizing: border-box;
-  border-radius: 5px;
-  border: 1px solid #ddd;
-  font-size: 12px;
-}
+    select.atu {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-image: none;
+      width: 100%;
+      max-width: 250px;
+      padding: 6px;
+      margin: 5px 0;
+      box-sizing: border-box;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      font-size: 12px;
+    }
     .output {
       background: #f9f9f9;
       font-weight: bold;
@@ -82,13 +80,9 @@ select.atu {
     .hidden {
       display: none;
     }
-
-    /* Tablo sütun genişliklerini ayarlamak */
     th, td {
-      width: 16%; /* Her sütun için genişlik ayarlıyoruz */
+      width: 16%;
     }
-
-    /* Mobil uyumluluk için tabloyu kaydırılabilir yapma */
     @media (max-width: 768px) {
       table {
         display: block;
@@ -101,7 +95,6 @@ select.atu {
 <body>
   <h2>Su Tesisleri Dairesi Başkanlığı Piezometre Hesaplama Tablosu</h2>
 
-  <!-- Başlık Tablosu -->
   <table>
     <thead>
       <tr>
@@ -114,53 +107,34 @@ select.atu {
       </tr>
     </thead>
     <tbody id="noktalarTablo">
-      <!-- Noktalar buraya eklenecek -->
     </tbody>
   </table>
 
-  <!-- Nokta Ekle Butonu -->
   <button onclick="ekleNokta()">Nokta Ekle</button>
-
-  <!-- Hesaplama Butonu -->
   <button onclick="hesapla()">Hesapla</button>
+  <button onclick="excelKaydet()">Excel'e Kaydet</button>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script>
-    // Boru çapı/atü iç çap tablosu
     const boruTablosu = {
       "110": 96.8, "125": 110.2, "140": 123.4, "160": 141, "180": 158.6,
       "200": 176.2, "225": 198.2, "250": 220.4, "280": 246.8, "315": 277.6,
       "355": 312.8, "400": 352.6, "450": 396.6
     };
 
-    // Nokta ekleme fonksiyonu
     function ekleNokta() {
       const tbody = document.getElementById('noktalarTablo');
       const row = document.createElement('tr');
-      
-      // Bir üstteki satırdan boru çapı, atü ve debi değerlerini almak
       const boruOnceki = tbody.children.length > 0 ? tbody.children[tbody.children.length - 1].querySelector('.boru').value : '110';
       const atuOnceki = tbody.children.length > 0 ? tbody.children[tbody.children.length - 1].querySelector('.atu').value : '10';
       const debiOnceki = tbody.children.length > 0 ? tbody.children[tbody.children.length - 1].querySelector('.debi').value : '';
 
-      // Kot, mesafe, çap, atü ve debi kutucukları
       row.innerHTML = `
         <td><input type="number" class="debi" value="${debiOnceki}" placeholder="debi" /></td>
         <td><input type="number" class="kot" placeholder="kot" /></td>
         <td><input type="number" class="mesafe" placeholder="mesafe" value="${tbody.children.length === 0 ? 0 : ''}" ${tbody.children.length === 0 ? 'readonly' : ''} /></td>
         <td><select class="boru">
-          <option value="110" ${boruOnceki === '110' ? 'selected' : ''}>110</option>
-          <option value="125" ${boruOnceki === '125' ? 'selected' : ''}>125</option>
-          <option value="140" ${boruOnceki === '140' ? 'selected' : ''}>140</option>
-          <option value="160" ${boruOnceki === '160' ? 'selected' : ''}>160</option>
-          <option value="180" ${boruOnceki === '180' ? 'selected' : ''}>180</option>
-          <option value="200" ${boruOnceki === '200' ? 'selected' : ''}>200</option>
-          <option value="225" ${boruOnceki === '225' ? 'selected' : ''}>225</option>
-          <option value="250" ${boruOnceki === '250' ? 'selected' : ''}>250</option>
-          <option value="280" ${boruOnceki === '280' ? 'selected' : ''}>280</option>
-          <option value="315" ${boruOnceki === '315' ? 'selected' : ''}>315</option>
-          <option value="355" ${boruOnceki === '355' ? 'selected' : ''}>355</option>
-          <option value="400" ${boruOnceki === '400' ? 'selected' : ''}>400</option>
-          <option value="450" ${boruOnceki === '450' ? 'selected' : ''}>450</option>
+          ${Object.keys(boruTablosu).map(boru => `<option value="${boru}" ${boru === boruOnceki ? 'selected' : ''}>${boru}</option>`).join('')}
         </select></td>
         <td><select class="atu">
           <option value="10" ${atuOnceki === '10' ? 'selected' : ''}>10</option>
@@ -171,43 +145,73 @@ select.atu {
       tbody.appendChild(row);
     }
 
-    // Hesaplama fonksiyonu
- function hesapla() {
-  const rows = document.querySelectorAll("#noktalarTablo tr");  // Tabloyu doğru seçiyoruz
-  let toplamYukKaybi = 0;
-  const ilkKot = parseFloat(rows[0].querySelector(".kot").value) || 0;
+    function hesapla() {
+      const rows = document.querySelectorAll("#noktalarTablo tr");
+      let toplamYukKaybi = 0;
+      const ilkKot = parseFloat(rows[0].querySelector(".kot").value) || 0;
 
-  rows.forEach((row, i) => {
-    const kot = parseFloat(row.querySelector(".kot").value) || 0;
-    const mesafe = parseFloat(row.querySelector(".mesafe").value) || 0;
-    const cap = row.querySelector(".boru").value;  // Boru çapını doğru alıyoruz
-    const atu = row.querySelector(".atu").value;  // Atü değerini doğru alıyoruz
-    const debi = parseFloat(row.querySelector(".debi").value) || 0;
+      rows.forEach((row, i) => {
+        const kot = parseFloat(row.querySelector(".kot").value) || 0;
+        const mesafe = parseFloat(row.querySelector(".mesafe").value) || 0;
+        const cap = row.querySelector(".boru").value;
+        const atu = row.querySelector(".atu").value;
+        const debi = parseFloat(row.querySelector(".debi").value) || 0;
 
-    // Boru çapı ve Atü için iç çap tablosunu kontrol ediyoruz
-    const icCap = boruTablosu[cap];
+        const icCap = boruTablosu[cap];
+        if (!icCap) {
+          alert(`İç çap bulunamadı: ${cap}`);
+          return;
+        }
 
-    if (!icCap) {
-      alert(`İç çap bulunamadı: ${cap}`);
-      return;
+        const icCapM = icCap / 1000;
+        const alan = Math.PI * Math.pow(icCapM / 2, 2);
+        const hiz = debi / 1000 / alan;
+        const yukKaybi = 6.815 * Math.pow(hiz / 150, 1.852) * Math.pow(icCapM, -1.167) * mesafe;
+        toplamYukKaybi += yukKaybi;
+        const piezoKot = ilkKot - toplamYukKaybi;
+        const isletmeBasinci = piezoKot - kot;
+        row.querySelector(".isletme").value = isletmeBasinci.toFixed(2);
+      });
     }
 
-    const icCapM = icCap / 1000;  // İç çapı metre cinsine çeviriyoruz
-    const alan = Math.PI * Math.pow(icCapM / 2, 2);  // Alanı hesaplıyoruz
-    const hiz = debi / 1000 / alan;  // Hızı hesaplıyoruz (L/s -> m3/s)
+    function excelKaydet() {
+      const rows = document.querySelectorAll("#noktalarTablo tr");
+      const data = [["Debi (L/s)", "Kot (m)", "Mesafe (m)", "Yük Kaybı (m)", "Toplam Yük Kaybı (m)", "Boru Çapı (mm)", "Atü", "İşletme Basıncı (m)"]];
+      let toplamYukKaybi = 0;
+      const ilkKot = parseFloat(rows[0].querySelector(".kot").value) || 0;
 
-    // Yük kaybı hesaplama formülü
-    const yukKaybi = 6.815 * Math.pow(hiz / 150, 1.852) * Math.pow(icCapM, -1.167) * mesafe;
-    toplamYukKaybi += yukKaybi;
+      rows.forEach(row => {
+        const kot = parseFloat(row.querySelector(".kot").value) || 0;
+        const mesafe = parseFloat(row.querySelector(".mesafe").value) || 0;
+        const cap = row.querySelector(".boru").value;
+        const atu = row.querySelector(".atu").value;
+        const debi = parseFloat(row.querySelector(".debi").value) || 0;
+        const icCap = boruTablosu[cap];
+        const icCapM = icCap / 1000;
+        const alan = Math.PI * Math.pow(icCapM / 2, 2);
+        const hiz = debi / 1000 / alan;
+        const yukKaybi = 6.815 * Math.pow(hiz / 150, 1.852) * Math.pow(icCapM, -1.167) * mesafe;
+        toplamYukKaybi += yukKaybi;
+        const piezoKot = ilkKot - toplamYukKaybi;
+        const isletmeBasinci = piezoKot - kot;
 
-    // Piezometrik kotu hesaplıyoruz
-    const piezoKot = ilkKot - toplamYukKaybi;
+        data.push([
+          debi.toFixed(2),
+          kot.toFixed(2),
+          mesafe.toFixed(2),
+          yukKaybi.toFixed(2),
+          toplamYukKaybi.toFixed(2),
+          cap,
+          atu,
+          isletmeBasinci.toFixed(2)
+        ]);
+      });
 
-    // İşletme basıncını hesaplıyoruz (Piezometrik kot - Kot)
-    const isletmeBasinci = piezoKot - kot; 
-
-    row.querySelector(".isletme").value = isletmeBasinci.toFixed(2);  // Sonucu her satırda gösteriyoruz
-  });
-}  
-</script> </body>  
+      const ws = XLSX.utils.aoa_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Piezometre");
+      XLSX.writeFile(wb, "piezometre_hesaplama.xlsx");
+    }
+  </script>
+</body>
 </html>
