@@ -18,13 +18,13 @@
       width: 100%;
       border-collapse: collapse;
       margin-bottom: 1rem;
-      table-layout: fixed; /* Tabloyu sabitle */
+      table-layout: fixed;
     }
     th, td {
       border: 1px solid #ccc;
       padding: 6px;
       text-align: center;
-      word-wrap: break-word; /* Taşma olduğunda alt satıra geçsin */
+      word-wrap: break-word;
     }
     th {
       background-color: #f4f4f4;
@@ -59,7 +59,7 @@
 
     /* Tablo sütun genişliklerini ayarlamak */
     th, td {
-      width: 16%; /* Her sütun için genişlik ayarlıyoruz */
+      width: 16%;
     }
 
     /* Mobil uyumluluk için tabloyu kaydırılabilir yapma */
@@ -75,7 +75,6 @@
 <body>
   <h2>Su Tesisleri Dairesi Başkanlığı Piezometre Hesaplama Tablosu</h2>
 
-  <!-- Başlık Tablosu -->
   <table>
     <thead>
       <tr>
@@ -92,35 +91,28 @@
     </tbody>
   </table>
 
-  <!-- Nokta Ekle Butonu -->
   <button onclick="ekleNokta()">Nokta Ekle</button>
-
-  <!-- Hesaplama Butonu -->
   <button onclick="hesapla()">Hesapla</button>
 
   <script>
-    // Boru çapı/atü iç çap tablosu
     const boruTablosu = {
       "110": 96.8, "125": 110.2, "140": 123.4, "160": 141, "180": 158.6,
       "200": 176.2, "225": 198.2, "250": 220.4, "280": 246.8, "315": 277.6,
       "355": 312.8, "400": 352.6, "450": 396.6
     };
 
-    // Nokta ekleme fonksiyonu
     function ekleNokta() {
       const tbody = document.getElementById('noktalarTablo');
       const row = document.createElement('tr');
       
-      // Bir üstteki satırdan boru çapı, atü ve debi değerlerini almak
       const boruOnceki = tbody.children.length > 0 ? tbody.children[tbody.children.length - 1].querySelector('.boru').value : '110';
       const atuOnceki = tbody.children.length > 0 ? tbody.children[tbody.children.length - 1].querySelector('.atu').value : '10';
       const debiOnceki = tbody.children.length > 0 ? tbody.children[tbody.children.length - 1].querySelector('.debi').value : '';
 
-      // Kot, mesafe, çap, atü ve debi kutucukları
       row.innerHTML = `
-        <td><input type="text" class="debi" value="${debiOnceki}" placeholder="Debi (L/s)" oninput="degerKontrol(this)" /></td>
-        <td><input type="number" class="kot" placeholder="Kot (m)" /></td>
-        <td><input type="number" class="mesafe" value="${tbody.children.length === 0 ? 0 : ''}" ${tbody.children.length === 0 ? 'readonly' : ''} /></td>
+        <td><input type="tel" class="debi" value="${debiOnceki}" placeholder="Debi (L/s)" oninput="degerKontrol(this)" /></td>
+        <td><input type="tel" class="kot" placeholder="Kot (m)" oninput="degerKontrol(this)" /></td>
+        <td><input type="tel" class="mesafe" value="${tbody.children.length === 0 ? 0 : ''}" ${tbody.children.length === 0 ? 'readonly' : ''} oninput="degerKontrol(this)" /></td>
         <td><select class="boru">
           <option value="110" ${boruOnceki === '110' ? 'selected' : ''}>110</option>
           <option value="125" ${boruOnceki === '125' ? 'selected' : ''}>125</option>
@@ -145,20 +137,18 @@
       tbody.appendChild(row);
     }
 
-    // Oninput ile sadece rakam ve nokta girişini kontrol et
     function degerKontrol(input) {
-      // Virgül basıldığında hiçbir şey yapma (virgül işlevsiz kalsın)
+      // Eğer kullanıcı virgül girerse, virgülü sil
       if (input.value.includes(',')) {
         input.value = input.value.replace(',', '');
       }
 
-      // Sadece sayılar ve nokta izin ver
+      // Sadece sayılara ve noktalara izin ver
       if (!/^(\d+(\.\d*)?|\.\d+)$/.test(input.value)) {
-        input.value = input.value.slice(0, -1); // Son girilen geçersiz karakteri sil
+        input.value = input.value.slice(0, -1); // Geçersiz bir karakter girdiğinde son karakteri sil
       }
     }
 
-    // Hesaplama fonksiyonu
     function hesapla() {
       const rows = document.querySelectorAll('#noktalarTablo tr');
       let toplamYukKaybi = 0;
@@ -170,26 +160,17 @@
         const debi = parseFloat(row.querySelector('.debi').value);
         const atü = parseFloat(row.querySelector('.atu').value);
 
-        // Boru çapı ve iç çapı hesaplama
         const icCap = boruTablosu[boruSecim];
-
-        // Hız hesaplaması (debi L/s, iç çap mm cinsinden)
         const hiz = debi / 1000 / (Math.PI * Math.pow(icCap / 1000 / 2, 2));
-
-        // Yük kaybı hesaplaması
         const yukKaybi = 6.815 * Math.pow((hiz / 150), 1.852) * Math.pow(icCap / 1000, -1.167) * mesafe;
 
-        // Kümülatif yük kaybı
         toplamYukKaybi += yukKaybi;
 
-        // Piezometrik kot ve işletme basıncı hesaplama
         const piezometrikKot = kot - toplamYukKaybi;
         const isletmeBasinc = kot - piezometrikKot;
 
-        // İşletme basıncını metre cinsine çevirmek için bar'ı 0.1 ile çarpıyoruz
         const isletmeBasincMetre = isletmeBasinc * 0.1;
 
-        // Sonuçları ilgili hücrelere yazdırma
         row.querySelector('.isletme').value = isletmeBasincMetre.toFixed(2);
       });
     }
