@@ -82,7 +82,7 @@
         <th>Kot (m)</th>
         <th>Mesafe (m)</th>
         <th>Boru Çapı (mm)</th>
-        <th>Boru Atü (bar)</th>
+        <th>Atü (bar)</th>
         <th>Debi (L/s)</th>
         <th>İşletme Basıncı (bar)</th>
       </tr>
@@ -101,11 +101,9 @@
   <script>
     // Boru çapı/atü iç çap tablosu
     const boruTablosu = {
-      "110/10": 96.8, "125/10": 110.2, "140/10": 123.4, "160/10": 141, "180/10": 158.6,
-      "200/10": 176.2, "225/10": 198.2, "250/10": 220.4, "280/10": 246.8, "315/10": 277.6,
-      "355/10": 312.8, "400/10": 352.6, "450/10": 396.6, "110/16": 90, "125/16": 102.2,
-      "140/16": 114.6, "160/16": 130.8, "180/16": 147.2, "200/16": 163.6, "225/16": 184,
-      "250/16": 204.6, "280/16": 229.2, "315/16": 257.8, "355/16": 290.6, "400/16": 327.4, "450/16": 368.2
+      "110": 96.8, "125": 110.2, "140": 123.4, "160": 141, "180": 158.6,
+      "200": 176.2, "225": 198.2, "250": 220.4, "280": 246.8, "315": 277.6,
+      "355": 312.8, "400": 352.6, "450": 396.6
     };
 
     // Nokta ekleme fonksiyonu
@@ -118,34 +116,24 @@
         <td><input type="number" class="kot" placeholder="Kot (m)" /></td>
         <td><input type="number" class="mesafe" value="0" ${tbody.children.length === 0 ? "readonly" : ""} /></td>
         <td><select class="boru">
-          <option value="110/10">110/10</option>
-          <option value="125/10">125/10</option>
-          <option value="140/10">140/10</option>
-          <option value="160/10">160/10</option>
-          <option value="180/10">180/10</option>
-          <option value="200/10">200/10</option>
-          <option value="225/10">225/10</option>
-          <option value="250/10">250/10</option>
-          <option value="280/10">280/10</option>
-          <option value="315/10">315/10</option>
-          <option value="355/10">355/10</option>
-          <option value="400/10">400/10</option>
-          <option value="450/10">450/10</option>
-          <option value="110/16">110/16</option>
-          <option value="125/16">125/16</option>
-          <option value="140/16">140/16</option>
-          <option value="160/16">160/16</option>
-          <option value="180/16">180/16</option>
-          <option value="200/16">200/16</option>
-          <option value="225/16">225/16</option>
-          <option value="250/16">250/16</option>
-          <option value="280/16">280/16</option>
-          <option value="315/16">315/16</option>
-          <option value="355/16">355/16</option>
-          <option value="400/16">400/16</option>
-          <option value="450/16">450/16</option>
+          <option value="110">110</option>
+          <option value="125">125</option>
+          <option value="140">140</option>
+          <option value="160">160</option>
+          <option value="180">180</option>
+          <option value="200">200</option>
+          <option value="225">225</option>
+          <option value="250">250</option>
+          <option value="280">280</option>
+          <option value="315">315</option>
+          <option value="355">355</option>
+          <option value="400">400</option>
+          <option value="450">450</option>
         </select></td>
-        <td><input type="number" class="atu" placeholder="Atü (bar)" /></td>
+        <td><select class="atu">
+          <option value="10">10</option>
+          <option value="16">16</option>
+        </select></td>
         <td><input type="number" class="debi" placeholder="Debi (L/s)" /></td>
         <td><input type="number" class="isletme" readonly /></td>
       `;
