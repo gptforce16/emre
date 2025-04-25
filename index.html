@@ -162,42 +162,42 @@
     }
 
     // Hesaplama fonksiyonu
- function hesapla() {  
-    const rows = document.querySelectorAll("#tabloBody tr");  
-    let toplamYukKaybi = 0;  
-    const ilkKot = parseFloat(rows[0].querySelector(".kot").value) || 0;  
-  
-    rows.forEach((row, i) => {  
-      const kot = parseFloat(row.querySelector(".kot").value) || 0;  
-      const mesafe = parseFloat(row.querySelector(".mesafe").value) || 0;  
-      const cap = row.querySelector(".cap").value;  
-      const atu = row.querySelector(".atu").value;  
-      const debi = parseFloat(row.querySelector(".debi").value) || 0;  
-  
-      const key = `${cap}/${atu}`;  
-      const icCap = icCapTablosu[key];  
-  
-      if (!icCap) {  
-        alert(`İç çap bulunamadı: ${key}`);  
-        return;  
-      }  
-  
-      const icCapM = icCap / 1000;  
-      const alan = Math.PI * Math.pow(icCapM / 2, 2);  
-      const hiz = debi / 1000 / alan;  
-  
-      // Yük kaybı hesaplama  
-      const yukKaybi = 6.815 * Math.pow(hiz / 150, 1.852) * Math.pow(icCapM, -1.167) * mesafe;  
-      toplamYukKaybi += yukKaybi;  
-  
-      // Piezometrik kotu hesaplama  
-      const piezoKot = ilkKot - toplamYukKaybi;  
-  
-      // İşletme basıncı hesaplama (Piezometrik kot - Kot)  
-      const isletmeBasinci = piezoKot - kot; // Düzeltilen hesaplama  
-  
-      row.querySelector(".basinç").innerText = isletmeBasinci.toFixed(2);  
-    });  
-  }  
+ function hesapla() {
+  const rows = document.querySelectorAll("#noktalarTablo tr");  // Tabloyu doğru seçiyoruz
+  let toplamYukKaybi = 0;
+  const ilkKot = parseFloat(rows[0].querySelector(".kot").value) || 0;
+
+  rows.forEach((row, i) => {
+    const kot = parseFloat(row.querySelector(".kot").value) || 0;
+    const mesafe = parseFloat(row.querySelector(".mesafe").value) || 0;
+    const cap = row.querySelector(".boru").value;  // Boru çapını doğru alıyoruz
+    const atu = row.querySelector(".atu").value;  // Atü değerini doğru alıyoruz
+    const debi = parseFloat(row.querySelector(".debi").value) || 0;
+
+    // Boru çapı ve Atü için iç çap tablosunu kontrol ediyoruz
+    const icCap = boruTablosu[cap];
+
+    if (!icCap) {
+      alert(`İç çap bulunamadı: ${cap}`);
+      return;
+    }
+
+    const icCapM = icCap / 1000;  // İç çapı metre cinsine çeviriyoruz
+    const alan = Math.PI * Math.pow(icCapM / 2, 2);  // Alanı hesaplıyoruz
+    const hiz = debi / 1000 / alan;  // Hızı hesaplıyoruz (L/s -> m3/s)
+
+    // Yük kaybı hesaplama formülü
+    const yukKaybi = 6.815 * Math.pow(hiz / 150, 1.852) * Math.pow(icCapM, -1.167) * mesafe;
+    toplamYukKaybi += yukKaybi;
+
+    // Piezometrik kotu hesaplıyoruz
+    const piezoKot = ilkKot - toplamYukKaybi;
+
+    // İşletme basıncını hesaplıyoruz (Piezometrik kot - Kot)
+    const isletmeBasinci = piezoKot - kot; 
+
+    row.querySelector(".isletme").value = isletmeBasinci.toFixed(2);  // Sonucu her satırda gösteriyoruz
+  });
+}  
 </script> </body>  
 </html>
