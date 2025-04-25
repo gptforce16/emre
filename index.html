@@ -117,20 +117,21 @@
 
   <script>  
     const boruTablosu = {
-  "110": { "10": 96.8, "16": 90 },
-  "125": { "10": 110.2, "16": 102.2 },
-  "140": { "10": 123.4, "16": 114.6 },
-  "160": { "10": 141, "16": 130.8 },
-  "180": { "10": 158.6, "16": 147.2 },
-  "200": { "10": 176.2, "16": 163.6 },
-  "225": { "10": 198.2, "16": 184 },
-  "250": { "10": 220.4, "16": 204.6 },
-  "280": { "10": 246.8, "16": 229.2 },
-  "315": { "10": 277.6, "16": 257.8 },
-  "355": { "10": 312.8, "16": 290.6 },
-  "400": { "10": 352.6, "16": 327.4 },
-  "450": { "10": 396.6, "16": 368.2 }
-};  
+      "110": { "10": 96.8, "16": 90 },
+      "125": { "10": 110.2, "16": 102.2 },
+      "140": { "10": 123.4, "16": 114.6 },
+      "160": { "10": 141, "16": 130.8 },
+      "180": { "10": 158.6, "16": 147.2 },
+      "200": { "10": 176.2, "16": 163.6 },
+      "225": { "10": 198.2, "16": 184 },
+      "250": { "10": 220.4, "16": 204.6 },
+      "280": { "10": 246.8, "16": 229.2 },
+      "315": { "10": 277.6, "16": 257.8 },
+      "355": { "10": 312.8, "16": 290.6 },
+      "400": { "10": 352.6, "16": 327.4 },
+      "450": { "10": 396.6, "16": 368.2 }
+    };
+
     function ekleNokta() {  
       const tbody = document.getElementById('noktalarTablo');  
       const row = document.createElement('tr');  
@@ -153,7 +154,7 @@
       `;  
       tbody.appendChild(row);  
     }  
-  
+
     function hesapla() {  
       const rows = document.querySelectorAll("#noktalarTablo tr");  
       let toplamYukKaybi = 0;  
@@ -166,9 +167,9 @@
         const atu = row.querySelector(".atu").value;  
         const debi = parseFloat(row.querySelector(".debi").value) || 0;  
   
-        const icCap = boruTablosu[cap];  
+        const icCap = boruTablosu[cap][atu];  
         if (!icCap) {  
-          alert(`İç çap bulunamadı: ${cap}`);  
+          alert(`İç çap bulunamadı: ${cap} - ${atu}`);  
           return;  
         }  
   
@@ -196,7 +197,7 @@
         const mesafe = parseFloat(row.querySelector(".mesafe").value) || 0;
         const cap = row.querySelector(".boru").value;
         const atu = row.querySelector(".atu").value;
-        const icCap = boruTablosu[cap] / 1000;
+        const icCap = boruTablosu[cap][atu] / 1000;
         const alan = Math.PI * Math.pow(icCap / 2, 2);
         const hiz = debi / 1000 / alan;
         const yukKaybi = 6.815 * Math.pow(hiz / 150, 1.852) * Math.pow(icCap, -1.167) * mesafe;
