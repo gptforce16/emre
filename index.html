@@ -267,13 +267,13 @@
   // Başlıkları stilize etme
   XLSX.utils.sheet_add_aoa(ws, [data[0]], { origin: "A1" });
   ws['A1'].s = headerStyle;
-  
+
   // Verileri eklerken stil uygulama
   for (let i = 1; i < data.length; i++) {
     XLSX.utils.sheet_add_aoa(ws, [data[i]], { origin: `A${i + 1}` });
     const row = ws[`A${i + 1}`];
     row.s = rowStyle;
-    
+
     // "Düşük Basınç" uyarısı varsa, arka planı değiştirme
     if (data[i][9] === "Düşük Basınç") {
       ws[`A${i + 1}`].s.fill = { fgColor: { rgb: "FFCCCC" } };  // Koyu kırmızı arka plan
@@ -282,6 +282,18 @@
 
   // Tüm sütun genişliklerini 12.57 yapma
   ws['!cols'] = Array(data[0].length).fill({ wch: 12.57 }); // Her sütunun genişliğini 12.57 olarak ayarlama
+
+  // Başlık metin kaydırmayı başlatma (yükseklik ayarı)
+  for (let col = 0; col < data[0].length; col++) {
+    const column = String.fromCharCode(65 + col); // A, B, C, ... gibi
+    const headerCell = ws[`${column}1`];
+    if (headerCell) {
+      headerCell.s = headerStyle;
+      // Başlık hücresinin yüksekliğini artırarak kaydırmaya olanak sağlama
+      ws['!rows'] = ws['!rows'] || [];
+      ws['!rows'][0] = { hpt: 30 };  // Yüksekliği 30 olarak ayarlama
+    }
+  }
 
   XLSX.utils.book_append_sheet(wb, ws, "Piezometre Hesabı");
   XLSX.writeFile(wb, "piezometre_hesabi.xlsx");
