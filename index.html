@@ -148,6 +148,14 @@
         <td><input type="number" class="isletme" readonly /></td>
       `;
       tbody.appendChild(row);
+
+      // Sayı alanında virgülü noktaya çevirme
+      const inputs = row.querySelectorAll('input[type="number"]');
+      inputs.forEach(input => {
+        input.addEventListener('input', function() {
+          this.value = this.value.replace(',', '.');
+        });
+      });
     }
 
     // Hesaplama fonksiyonu
