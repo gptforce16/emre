@@ -18,30 +18,24 @@
       width: 100%;
       border-collapse: collapse;
       margin-bottom: 1rem;
-      table-layout: fixed; /* Tablo düzeni sabitlenecek */
+      table-layout: fixed; /* Tabloyu sabitle */
     }
     th, td {
       border: 1px solid #ccc;
       padding: 6px;
       text-align: center;
-      word-wrap: break-word; /* Metin taşarsa, taşan kısımlar alt satıra geçer */
+      word-wrap: break-word; /* Taşma olduğunda alt satıra geçsin */
     }
     th {
-      background-color: #f4f4f4; /* Başlık hücrelerinin arka plan rengi */
+      background-color: #f4f4f4;
     }
     input, select {
-      width: 100%; /* Genişlik 100% yapılarak kutucuklar başlık hücrelerine uyumlu hale gelir */
+      width: 100%;
       padding: 6px;
       margin: 5px 0;
       box-sizing: border-box;
       border-radius: 5px;
       border: 1px solid #ddd;
-    }
-    input[type="number"] {
-      width: 100%; /* Sayısal girişler de tam genişlik kullanacak */
-    }
-    select {
-      width: 100%; /* Çap ve Atü seçim kutuları da tam genişlikte olacak */
     }
     button {
       padding: 8px 12px;
@@ -61,6 +55,11 @@
     }
     .hidden {
       display: none;
+    }
+
+    /* Tablo sütun genişliklerini ayarlamak */
+    th, td {
+      width: 16%; /* Her sütun için genişlik ayarlıyoruz */
     }
 
     /* Mobil uyumluluk için tabloyu kaydırılabilir yapma */
@@ -84,7 +83,7 @@
         <th>Mesafe (m)</th>
         <th>Boru Çapı (mm)</th>
         <th>Boru Atü (bar)</th>
-        <th>Debi (m³/s)</th>
+        <th>Debi (L/s)</th>
         <th>İşletme Basıncı (bar)</th>
       </tr>
     </thead>
@@ -117,7 +116,7 @@
       // Kot, mesafe, çap, atü ve debi kutucukları
       row.innerHTML = `
         <td><input type="number" class="kot" placeholder="Kot (m)" /></td>
-        <td><input type="number" class="mesafe" value="0" /></td>
+        <td><input type="number" class="mesafe" value="0" ${tbody.children.length === 0 ? "readonly" : ""} /></td>
         <td><select class="boru">
           <option value="110/10">110/10</option>
           <option value="125/10">125/10</option>
@@ -147,7 +146,7 @@
           <option value="450/16">450/16</option>
         </select></td>
         <td><input type="number" class="atu" placeholder="Atü (bar)" /></td>
-        <td><input type="number" class="debi" placeholder="Debi (m³/s)" /></td>
+        <td><input type="number" class="debi" placeholder="Debi (L/s)" /></td>
         <td><input type="number" class="isletme" readonly /></td>
       `;
       tbody.appendChild(row);
@@ -168,7 +167,7 @@
         // Boru çapı ve iç çapı hesaplama
         const icCap = boruTablosu[boruSecim];
 
-        // Hız hesaplaması
+        // Hız hesaplaması (debi L/s, iç çap mm cinsinden)
         const hiz = debi / 1000 / (Math.PI * Math.pow(icCap / 1000 / 2, 2));
 
         // Yük kaybı hesaplaması
