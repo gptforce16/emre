@@ -110,7 +110,7 @@
       row.innerHTML = `
         <td><input type="text" class="debi" value="${debiOnceki}" placeholder="Debi (L/s)" oninput="degerKontrol(this)" /></td>
         <td><input type="number" class="kot" placeholder="Kot (m)" oninput="degerKontrol(this)" /></td>
-        <td><input type="number" class="mesafe" value="${tbody.children.length === 0 ? 0 : ''}" ${tbody.children.length === 0 ? 'readonly' : ''} oninput="degerKontrol(this)" /></td>
+        <td><input type="number" class="mesafe" value="${tbody.children.length === 0 ? 0 : ''}" ${tbody.children.length === 0 ? 'readonly' : ''} /></td>
         <td><select class="boru">
           <option value="110" ${boruOnceki === '110' ? 'selected' : ''}>110</option>
           <option value="125" ${boruOnceki === '125' ? 'selected' : ''}>125</option>
