@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Su Tesisleri Dairesi Başkanlığı Piezometre Hesaplama Tablosu</title>
+  <title>Su Tesisleri Dairesi Başkanlığı Piezometre Hesaplama</title>
   <style>
     body {
       font-family: sans-serif;
@@ -108,7 +108,7 @@
       const debiOnceki = tbody.children.length > 0 ? tbody.children[tbody.children.length - 1].querySelector('.debi').value : '';
 
       row.innerHTML = `
-        <td><input type="number" class="debi" value="${debiOnceki}" placeholder="Debi (L/s)" oninput="degerKontrol(this)" /></td>
+        <td><input type="text" class="debi" value="${debiOnceki}" placeholder="Debi (L/s)" oninput="degerKontrol(this)" /></td>
         <td><input type="number" class="kot" placeholder="Kot (m)" oninput="degerKontrol(this)" /></td>
         <td><input type="number" class="mesafe" value="${tbody.children.length === 0 ? 0 : ''}" ${tbody.children.length === 0 ? 'readonly' : ''} /></td>
         <td><select class="boru">
@@ -136,8 +136,18 @@
     }
 
     function degerKontrol(input) {
-      // Eğer kullanıcı virgül tuşuna basarsa, virgülü noktaya dönüştür
-      input.value = input.value.replace(',', '.');
+      let value = input.value;
+      // Virgül karakterini nokta ile değiştir
+      value = value.replace(',', '.');
+      // Sadece sayı ve nokta tuşlarını kabul et
+      value = value.replace(/[^0-9.]/g, '');
+      
+      // Eğer değer noktayı içeriyorsa, sadece bir kez girmesine izin ver
+      if (value.split('.').length > 2) {
+        value = value.slice(0, value.lastIndexOf('.'));
+      }
+
+      input.value = value;
     }
 
     function hesapla() {
