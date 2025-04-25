@@ -9,9 +9,12 @@
     h2 { margin-bottom: 1rem; }
     table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
     th, td { border: 1px solid #ccc; padding: 6px; text-align: center; }
-    input, select { width: 100%; padding: 4px; }
-    button { padding: 8px 12px; margin-top: 10px; }
+    input, select { width: 100%; padding: 8px; margin: 5px 0; box-sizing: border-box; border-radius: 5px; border: 1px solid #ddd; }
+    input[type="number"] { width: auto; }
+    button { padding: 8px 12px; margin-top: 10px; border-radius: 5px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+    button:hover { background-color: #45a049; }
     .output { background: #f9f9f9; font-weight: bold; }
+    .hidden { display: none; }  /* Piezometrik kot sütunu gizleme */
   </style>
 </head>
 <body>
@@ -26,7 +29,7 @@
       <th>Çap</th>
       <th>Atü</th>
       <th>Debi (L/s)</th>
-      <th>Piezometrik Kot</th>
+      <th class="hidden">Piezometrik Kot</th> <!-- Bu sütun gizlendi -->
       <th>İşletme Basıncı</th>
     </tr>
   </thead>
@@ -51,8 +54,8 @@
     const row = document.createElement("tr");
 
     row.innerHTML = `
-      <td><input type="number" class="kot" /></td>
-      <td><input type="number" class="mesafe" /></td>
+      <td><input type="number" class="kot" placeholder="Kot (m)" /></td>
+      <td><input type="number" class="mesafe" placeholder="Mesafe (m)" /></td>
       <td>
         <select class="cap">
           ${[110,125,140,160,180,200,225,250,280,315,355,400,450].map(c => `<option value="${c}">${c}</option>`).join('')}
@@ -64,8 +67,7 @@
           <option value="16">16</option>
         </select>
       </td>
-      <td><input type="number" class="debi" /></td>
-      <td class="output piezo"></td>
+      <td><input type="number" class="debi" placeholder="Debi (L/s)" /></td>
       <td class="output basinç"></td>
     `;
 
@@ -75,7 +77,7 @@
   function hesapla() {
     const rows = document.querySelectorAll("#tabloBody tr");
     let toplamYukKaybi = 0;
-    let ilkKot = parseFloat(rows[0].querySelector(".kot").value) || 0;
+    const ilkKot = parseFloat(rows[0].querySelector(".kot").value) || 0;
 
     rows.forEach((row, i) => {
       const kot = parseFloat(row.querySelector(".kot").value) || 0;
@@ -100,9 +102,8 @@
       toplamYukKaybi += yukKaybi;
 
       const piezoKot = ilkKot - toplamYukKaybi;
-      const isletmeBasinci = kot - piezoKot;
+      const isletmeBasinci = Math.max(0, kot - piezoKot); // Negatif sonucu engelle
 
-      row.querySelector(".piezo").innerText = piezoKot.toFixed(2);
       row.querySelector(".basinç").innerText = isletmeBasinci.toFixed(2);
     });
   }
