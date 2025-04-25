@@ -119,7 +119,7 @@
       // Kot, mesafe, çap, atü ve debi kutucukları
       row.innerHTML = `
         <td><input type="number" class="kot" placeholder="Kot (m)" /></td>
-        <td><input type="number" class="mesafe" value="" /></td>
+        <td><input type="number" class="mesafe" value="${tbody.children.length === 0 ? 0 : ''}" ${tbody.children.length === 0 ? 'readonly' : ''} /></td>
         <td><select class="boru">
           <option value="110" ${boruOnceki === '110' ? 'selected' : ''}>110</option>
           <option value="125" ${boruOnceki === '125' ? 'selected' : ''}>125</option>
@@ -143,12 +143,6 @@
         <td><input type="number" class="isletme" readonly /></td>
       `;
       tbody.appendChild(row);
-
-      // İlk satır hariç, mesafe kutucuğunun içindeki değeri sıfır yapma
-      if (tbody.children.length > 1) {
-        const lastMesafeInput = row.querySelector('.mesafe');
-        lastMesafeInput.value = ''; // Sıfır olmaması için boş bırak
-      }
     }
 
     // Hesaplama fonksiyonu
