@@ -186,56 +186,57 @@
     }
 
     function exceleKaydet() {
-      const rows = document.querySelectorAll("#noktalarTablo tr");
-      const ilkKot = parseFloat(rows[0]?.querySelector(".kot").value) || 0;
-      let toplamYukKaybi = 0;
-      const data = [["Debi (L/s)", "Kot (m)", "Mesafe (m)", "Yük Kaybı", "Toplam Yük Kaybı", "Boru Çapı", "Atü", "Hız (m/s)", "İşletme Basıncı", "Aparat"]];
-      
-      rows.forEach((row, i) => {
-        const debi = parseFloat(row.querySelector(".debi").value) || 0;
-        const kot = parseFloat(row.querySelector(".kot").value) || 0;
-        const mesafe = parseFloat(row.querySelector(".mesafe").value) || 0;
-        const cap = row.querySelector(".boru").value;
-        const atu = row.querySelector(".atu").value;
-        const icCap = boruTablosu[cap][atu] / 1000;
-        const alan = Math.PI * Math.pow(icCap / 2, 2);
-        const hiz = debi / 1000 / alan;
-        const yukKaybi = 6.815 * Math.pow(hiz / 150, 1.852) * Math.pow(icCap, -1.167) * mesafe;
-        toplamYukKaybi += yukKaybi;
-        const piezoKot = ilkKot - toplamYukKaybi;
-        const isletme = piezoKot - kot;
+  const rows = document.querySelectorAll("#noktalarTablo tr");
+  const ilkKot = parseFloat(rows[0]?.querySelector(".kot").value) || 0;
+  let toplamYukKaybi = 0;
+  const data = [["Debi (L/s)", "Kot (m)", "Mesafe (m)", "Yük Kaybı", "Toplam Yük Kaybı", "Boru Çapı", "Atü", "Hız (m/s)", "İşletme Basıncı", "Uyarı"]];
+  
+  let oncekiKot = ilkKot;
 
-        let aparat = "";
-        if (i > 0) {
-          const prevKot = parseFloat(rows[i - 1].querySelector(".kot").value) || 0;
-          const nextKot = parseFloat(rows[i + 1]?.querySelector(".kot")?.value) || null;
+  rows.forEach((row, i) => {
+    const debi = parseFloat(row.querySelector(".debi").value) || 0;
+    const kot = parseFloat(row.querySelector(".kot").value) || 0;
+    const mesafe = parseFloat(row.querySelector(".mesafe").value) || 0;
+    const cap = row.querySelector(".boru").value;
+    const atu = row.querySelector(".atu").value;
+    const icCap = boruTablosu[cap][atu] / 1000;
+    const alan = Math.PI * Math.pow(icCap / 2, 2);
+    const hiz = debi / 1000 / alan;
+    const yukKaybi = 6.815 * Math.pow(hiz / 150, 1.852) * Math.pow(icCap, -1.167) * mesafe;
+    toplamYukKaybi += yukKaybi;
+    const piezoKot = ilkKot - toplamYukKaybi;
+    const isletme = piezoKot - kot;
 
-          if (nextKot !== null) {
-            const farkPrevNext = Math.abs(prevKot - nextKot);
-            
-            if (farkPrevNext > 0.5) {
-              if (kot > prevKot && kot > nextKot) aparat = "Vantuz";
-              if (kot < prevKot && kot < nextKot) aparat = "Tahliye";
-            }
-          }
-        }
+    // Uyarı mantığı:
+    let uyarı = "";
+    if (i > 0) {
+      const prevKot = parseFloat(rows[i - 1].querySelector(".kot").value) || 0;
+      const nextKot = parseFloat(rows[i + 1]?.querySelector(".kot")?.value) || null;
 
-        data.push([
-          debi, kot, mesafe,
-          yukKaybi.toFixed(2),
-          toplamYukKaybi.toFixed(2),
-          cap, atu,
-          hiz.toFixed(2),
-          isletme.toFixed(2),
-          aparat
-        ]);
-      });
-
-      const ws = XLSX.utils.aoa_to_sheet(data);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Piezometre Hesabı");
-      XLSX.writeFile(wb, "piezometre_hesabi.xlsx");
+      if (nextKot !== null) {
+        if (kot > prevKot && kot > nextKot) uyarı = "Vantuz";
+        if (kot < prevKot && kot < nextKot) uyarı = "Tahliye";
+      }
     }
+
+    data.push([
+      debi, kot, mesafe,
+      yukKaybi.toFixed(2),
+      toplamYukKaybi.toFixed(2),
+      cap, atu,
+      hiz.toFixed(2),
+      isletme.toFixed(2),
+      uyarı
+    ]);
+
+    oncekiKot = kot;
+  });
+
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Piezometre Hesabı");
+  XLSX.writeFile(wb, "piezometre_hesabi.xlsx");
+}
   </script>  
 </body>  
 </html>
