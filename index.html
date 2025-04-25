@@ -1,177 +1,130 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Debi ve İşletme Basıncı Hesaplama</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Basınç Hesaplama</title>
   <style>
-    body {
-      font-family: sans-serif;
-      padding: 1rem;
-      max-width: 800px;
-      margin: auto;
-    }
-    h2 {
-      margin-bottom: 1rem;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 1rem;
-      table-layout: fixed; /* Tabloyu sabitle */
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 6px;
-      text-align: center;
-      word-wrap: break-word; /* Taşma olduğunda alt satıra geçsin */
-    }
-    th {
-      background-color: #f4f4f4;
-    }
-    input, select {
-      width: 100%;
-      padding: 6px;
-      margin: 5px 0;
-      box-sizing: border-box;
-      border-radius: 5px;
-      border: 1px solid #ddd;
-    }
-    button {
-      padding: 8px 12px;
-      margin-top: 10px;
-      border-radius: 5px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
-    .output {
-      background: #f9f9f9;
-      font-weight: bold;
-    }
-    .hidden {
-      display: none;
-    }
-
-    /* Tablo sütun genişliklerini ayarlamak */
-    th, td {
-      width: 16%; /* Her sütun için genişlik ayarlıyoruz */
-    }
-
-    /* Mobil uyumluluk için tabloyu kaydırılabilir yapma */
-    @media (max-width: 768px) {
-      table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
-      }
-    }
+    body { font-family: sans-serif; padding: 1rem; max-width: 800px; margin: auto; }
+    h2 { margin-bottom: 1rem; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+    th, td { border: 1px solid #ccc; padding: 6px; text-align: center; }
+    input, select { width: 100%; padding: 8px; margin: 5px 0; box-sizing: border-box; border-radius: 5px; border: 1px solid #ddd; }
+    select { width: auto; } /* Çap ve Atü select kutularını genişletmek için */
+    input[type="number"] { width: auto; }
+    button { padding: 8px 12px; margin-top: 10px; border-radius: 5px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+    button:hover { background-color: #45a049; }
+    .output { background: #f9f9f9; font-weight: bold; }
+    .hidden { display: none; }  /* Piezometrik kot sütunu gizleme */
   </style>
 </head>
 <body>
-  <h2>Debi ve İşletme Basıncı Hesaplama</h2>
 
-  <!-- Başlık Tablosu -->
-  <table>
-    <thead>
-      <tr>
-        <th>Kot (m)</th>
-        <th>Mesafe (m)</th>
-        <th>Boru Çapı (mm)</th>
-        <th>Atü (bar)</th>
-        <th>Debi (L/s)</th>
-        <th>İşletme Basıncı (bar)</th>
-      </tr>
-    </thead>
-    <tbody id="noktalarTablo">
-      <!-- Noktalar buraya eklenecek -->
-    </tbody>
-  </table>
+<h2>Nokta Ekle ve Hesapla</h2>
 
-  <!-- Nokta Ekle Butonu -->
-  <button onclick="ekleNokta()">Nokta Ekle</button>
+<table id="noktaTablosu">
+  <thead>
+    <tr>
+      <th>Kot (m)</th>
+      <th>Mesafe (m)</th>
+      <th>Çap</th>
+      <th>Atü</th>
+      <th>Debi (L/s)</th>
+      <th class="hidden">Piezometrik Kot</th> <!-- Bu sütun gizlendi -->
+      <th>İşletme Basıncı</th>
+    </tr>
+  </thead>
+  <tbody id="tabloBody"></tbody>
+</table>
 
-  <!-- Hesaplama Butonu -->
-  <button onclick="hesapla()">Hesapla</button>
+<button onclick="noktaEkle()">+ Nokta Ekle</button>
+<button onclick="hesapla()">Hesapla</button>
 
-  <script>
-    // Boru çapı/atü iç çap tablosu
-    const boruTablosu = {
-      "110": 96.8, "125": 110.2, "140": 123.4, "160": 141, "180": 158.6,
-      "200": 176.2, "225": 198.2, "250": 220.4, "280": 246.8, "315": 277.6,
-      "355": 312.8, "400": 352.6, "450": 396.6
-    };
+<script>
+  const icCapTablosu = {
+    "110/10": 96.8, "125/10": 110.2, "140/10": 123.4, "160/10": 141, "180/10": 158.6,
+    "200/10": 176.2, "225/10": 198.2, "250/10": 220.4, "280/10": 246.8, "315/10": 277.6,
+    "355/10": 312.8, "400/10": 352.6, "450/10": 396.6,
+    "110/16": 90, "125/16": 102.2, "140/16": 114.6, "160/16": 130.8, "180/16": 147.2,
+    "200/16": 163.6, "225/16": 184, "250/16": 204.6, "280/16": 229.2, "315/16": 257.8,
+    "355/16": 290.6, "400/16": 327.4, "450/16": 368.2
+  };
 
-    // Nokta ekleme fonksiyonu
-    function ekleNokta() {
-      const tbody = document.getElementById('noktalarTablo');
-      const row = document.createElement('tr');
+  function noktaEkle() {
+    const tbody = document.getElementById("tabloBody");
+    const row = document.createElement("tr");
 
-      // Kot, mesafe, çap, atü ve debi kutucukları
-      row.innerHTML = `
-        <td><input type="number" class="kot" placeholder="Kot (m)" /></td>
-        <td><input type="number" class="mesafe" value="0" ${tbody.children.length === 0 ? "readonly" : ""} /></td>
-        <td><select class="boru">
-          <option value="110">110</option>
-          <option value="125">125</option>
-          <option value="140">140</option>
-          <option value="160">160</option>
-          <option value="180">180</option>
-          <option value="200">200</option>
-          <option value="225">225</option>
-          <option value="250">250</option>
-          <option value="280">280</option>
-          <option value="315">315</option>
-          <option value="355">355</option>
-          <option value="400">400</option>
-          <option value="450">450</option>
-        </select></td>
-        <td><select class="atu">
+    row.innerHTML = `
+      <td><input type="number" class="kot" placeholder="Kot (m)" /></td>
+      <td><input type="number" class="mesafe" placeholder="Mesafe (m)" value="0" oninput="mesafeKontrol(event)" /></td>
+      <td>
+        <select class="cap">
+          ${[110,125,140,160,180,200,225,250,280,315,355,400,450].map(c => `<option value="${c}">${c}</option>`).join('')}
+        </select>
+      </td>
+      <td>
+        <select class="atu">
           <option value="10">10</option>
           <option value="16">16</option>
-        </select></td>
-        <td><input type="number" class="debi" placeholder="Debi (L/s)" /></td>
-        <td><input type="number" class="isletme" readonly /></td>
-      `;
-      tbody.appendChild(row);
+        </select>
+      </td>
+      <td><input type="number" class="debi" placeholder="Debi (L/s)" /></td>
+      <td class="output basinç"></td>
+    `;
+
+    tbody.appendChild(row);
+  }
+
+  function mesafeKontrol(event) {
+    const row = event.target.closest('tr');
+    const mesafeInput = row.querySelector('.mesafe');
+
+    if (row.rowIndex === 1) {
+      mesafeInput.value = 0; // İlk satırda mesafe her zaman 0 olacak
+      mesafeInput.disabled = true; // Mesafe kutusu ilk satırda kullanılamaz olacak
+    } else {
+      mesafeInput.disabled = false; // Diğer satırlarda mesafe girişi yapılabilir
     }
+  }
 
-    // Hesaplama fonksiyonu
-    function hesapla() {
-      const rows = document.querySelectorAll('#noktalarTablo tr');
-      let toplamYukKaybi = 0;
+  function hesapla() {
+    const rows = document.querySelectorAll("#tabloBody tr");
+    let toplamYukKaybi = 0;
+    const ilkKot = parseFloat(rows[0].querySelector(".kot").value) || 0;
 
-      rows.forEach(row => {
-        const kot = parseFloat(row.querySelector('.kot').value);
-        const mesafe = parseFloat(row.querySelector('.mesafe').value);
-        const boruSecim = row.querySelector('.boru').value;
-        const debi = parseFloat(row.querySelector('.debi').value);
-        const atü = parseFloat(row.querySelector('.atu').value);
+    rows.forEach((row, i) => {
+      const kot = parseFloat(row.querySelector(".kot").value) || 0;
+      const mesafe = parseFloat(row.querySelector(".mesafe").value) || 0;
+      const cap = row.querySelector(".cap").value;
+      const atu = row.querySelector(".atu").value;
+      const debi = parseFloat(row.querySelector(".debi").value) || 0;
 
-        // Boru çapı ve iç çapı hesaplama
-        const icCap = boruTablosu[boruSecim];
+      const key = `${cap}/${atu}`;
+      const icCap = icCapTablosu[key];
 
-        // Hız hesaplaması (debi L/s, iç çap mm cinsinden)
-        const hiz = debi / 1000 / (Math.PI * Math.pow(icCap / 1000 / 2, 2));
+      if (!icCap) {
+        alert(`İç çap bulunamadı: ${key}`);
+        return;
+      }
 
-        // Yük kaybı hesaplaması
-        const yukKaybi = 6.815 * Math.pow((hiz / 150), 1.852) * Math.pow(icCap / 1000, -1.167) * mesafe;
+      const icCapM = icCap / 1000;
+      const alan = Math.PI * Math.pow(icCapM / 2, 2);
+      const hiz = debi / 1000 / alan;
 
-        // Kümülatif yük kaybı
-        toplamYukKaybi += yukKaybi;
+      // Yük kaybı hesaplama
+      const yukKaybi = 6.815 * Math.pow(hiz / 150, 1.852) * Math.pow(icCapM, -1.167) * mesafe;
+      toplamYukKaybi += yukKaybi;
 
-        // Piezometrik kot ve işletme basıncı hesaplama
-        const piezometrikKot = kot - toplamYukKaybi;
-        const isletmeBasinc = kot - piezometrikKot;
+      // Piezometrik kotu hesaplama
+      const piezoKot = ilkKot - toplamYukKaybi;
 
-        // Sonuçları ilgili hücrelere yazdırma
-        row.querySelector('.isletme').value = isletmeBasinc.toFixed(2);
-      });
-    }
-  </script>
+      // İşletme basıncı hesaplama (Piezometrik kot - Kot)
+      const isletmeBasinci = piezoKot - kot; // Düzeltilen hesaplama
+
+      row.querySelector(".basinç").innerText = isletmeBasinci.toFixed(2);
+    });
+  }
+</script>
+
 </body>
 </html>
