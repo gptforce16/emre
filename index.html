@@ -25,13 +25,13 @@
 <table id="noktaTablosu">
   <thead>
     <tr>
+      <th>Debi (L/s)</th> <!-- Debi ilk sütunda olacak -->
       <th>Kot (m)</th>
       <th>Mesafe (m)</th>
       <th>Çap</th>
       <th>Atü</th>
-      <th>Debi (L/s)</th>
       <th class="hidden">Piezometrik Kot</th> <!-- Bu sütun gizlendi -->
-      <th>İşletme Basıncı</th>
+      <th>İşletme Basıncı</th> <!-- İşletme basıncı metre cinsinden olacak -->
     </tr>
   </thead>
   <tbody id="tabloBody"></tbody>
@@ -55,6 +55,7 @@
     const row = document.createElement("tr");
 
     row.innerHTML = `
+      <td><input type="number" class="debi" placeholder="Debi (L/s)" /></td>
       <td><input type="number" class="kot" placeholder="Kot (m)" /></td>
       <td><input type="number" class="mesafe" placeholder="Mesafe (m)" value="0" oninput="mesafeKontrol(event)" /></td>
       <td>
@@ -68,7 +69,6 @@
           <option value="16">16</option>
         </select>
       </td>
-      <td><input type="number" class="debi" placeholder="Debi (L/s)" /></td>
       <td class="output basinç"></td>
     `;
 
@@ -107,9 +107,9 @@
         return;
       }
 
-      const icCapM = icCap / 1000;
-      const alan = Math.PI * Math.pow(icCapM / 2, 2);
-      const hiz = debi / 1000 / alan;
+      const icCapM = icCap / 1000;  // İç çapı metre cinsine çeviriyoruz
+      const alan = Math.PI * Math.pow(icCapM / 2, 2);  // Alan hesaplaması
+      const hiz = debi / 1000 / alan;  // Hızı hesaplıyoruz
 
       // Yük kaybı hesaplama
       const yukKaybi = 6.815 * Math.pow(hiz / 150, 1.852) * Math.pow(icCapM, -1.167) * mesafe;
@@ -119,9 +119,12 @@
       const piezoKot = ilkKot - toplamYukKaybi;
 
       // İşletme basıncı hesaplama (Piezometrik kot - Kot)
-      const isletmeBasinci = piezoKot - kot; // Düzeltilen hesaplama
+      const isletmeBasinci = piezoKot - kot;
 
-      row.querySelector(".basinç").innerText = isletmeBasinci.toFixed(2);
+      // İşletme basıncını metre cinsine çevirme (1 bar = 10 m su)
+      const isletmeBasinciMetre = isletmeBasinci * 0.1;
+
+      row.querySelector(".basinç").innerText = isletmeBasinciMetre.toFixed(2); // Sonuçları güncelliyoruz
     });
   }
 </script>
