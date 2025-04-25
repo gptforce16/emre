@@ -2,14 +2,9 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Su Tesisleri Dairesi Başkanlığı Piezometre Hesaplama Tablosu</title>
   <style>
-    /* Sayfa üzerindeki tüm öğelere yakınlaştırmayı engelle */
-    html, body {
-      touch-action: none;  /* Bu özellik mobil cihazlarda yakınlaştırmayı engeller */
-    }
-
     body {
       font-family: sans-serif;
       padding: 1rem;
@@ -123,7 +118,7 @@
 
       // Kot, mesafe, çap, atü ve debi kutucukları
       row.innerHTML = `
-        <td><input type="number" class="debi" value="${debiOnceki}" placeholder="Debi (L/s)" /></td>
+        <td><input type="text" class="debi" value="${debiOnceki}" placeholder="Debi (L/s)" oninput="degerKontrol(this)" /></td>
         <td><input type="number" class="kot" placeholder="Kot (m)" /></td>
         <td><input type="number" class="mesafe" value="${tbody.children.length === 0 ? 0 : ''}" ${tbody.children.length === 0 ? 'readonly' : ''} /></td>
         <td><select class="boru">
@@ -148,14 +143,17 @@
         <td><input type="number" class="isletme" readonly /></td>
       `;
       tbody.appendChild(row);
+    }
 
-      // Sayı alanında virgülü noktaya çevirme
-      const inputs = row.querySelectorAll('input[type="number"]');
-      inputs.forEach(input => {
-        input.addEventListener('input', function() {
-          this.value = this.value.replace(',', '.');
-        });
-      });
+    // Oninput ile sadece rakam ve nokta girişini kontrol et
+    function degerKontrol(input) {
+      // Girişteki virgülü noktaya çevir
+      input.value = input.value.replace(',', '.');
+
+      // Sadece sayılar ve nokta izin ver
+      if (!/^(\d+(\.\d*)?|\.\d+)$/.test(input.value)) {
+        input.value = input.value.slice(0, -1); // Son girilen geçersiz karakteri sil
+      }
     }
 
     // Hesaplama fonksiyonu
