@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Basınç Hesaplama</title>
+  <style>
+    body { font-family: sans-serif; padding: 1rem; max-width: 800px; margin: auto; }
+    h2 { margin-bottom: 1rem; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+    th, td { border: 1px solid #ccc; padding: 6px; text-align: center; }
+    input, select { width: 100%; padding: 4px; }
+    button { padding: 8px 12px; margin-top: 10px; }
+    .output { background: #f9f9f9; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<h2>Nokta Ekle ve Hesapla</h2>
+
+<table id="noktaTablosu">
+  <thead>
+    <tr>
+      <th>Kot (m)</th>
+      <th>Mesafe (m)</th>
+      <th>Çap</th>
+      <th>Atü</th>
+      <th>Debi (L/s)</th>
+      <th>Piezometrik Kot</th>
+      <th>İşletme Basıncı</th>
+    </tr>
+  </thead>
+  <tbody id="tabloBody"></tbody>
+</table>
+
+<button onclick="noktaEkle()">+ Nokta Ekle</button>
+<button onclick="hesapla()">Hesapla</button>
+
+<script>
+  const icCapTablosu = {
+    "110/10": 96.8, "125/10": 110.2, "140/10": 123.4, "160/10": 141, "180/10": 158.6,
+    "200/10": 176.2, "225/10": 198.2, "250/10": 220.4, "280/10": 246.8, "315/10": 277.6,
+    "355/10": 312.8, "400/10": 352.6, "450/10": 396.6,
+    "110/16": 90, "125/16": 102.2, "140/16": 114.6, "160/16": 130.8, "180/16": 147.2,
+    "200/16": 163.6, "225/16": 184, "250/16": 204.6, "280/16": 229.2, "315/16": 257.8,
+    "355/16": 290.6, "400/16": 327.4, "450/16": 368.2
+  };
+
+  function noktaEkle() {
+    const tbody = document.getElementById("tabloBody");
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td><input type="number" class="kot" /></td>
+      <td><input type="number" class="mesafe" /></td>
+      <td>
+        <select class="cap">
+          ${[110,125,140,160,180,200,225,250,280,315,355,400,450].map(c => `<option value="${c}">${c}</option>`).join('')}
+        </select>
+      </td>
+      <td>
+        <select class="atu">
+          <option value="10">10</option>
+          <option value="16">16</option>
+        </select>
+      </td>
+      <td><input type="number" class="debi" /></td>
+      <td class="output piezo"></td>
+      <td class="output basinç"></td>
+    `;
+
+    tbody.appendChild(row);
+  }
+
+  function hesapla() {
+    const rows = document.querySelectorAll("#tabloBody tr");
+    let toplamYukKaybi = 0;
+    let ilkKot = parseFloat(rows[0].querySelector(".kot").value) || 0;
+
+    rows.forEach((row, i) => {
+      const kot = parseFloat(row.querySelector(".kot").value) || 0;
+      const mesafe = parseFloat(row.querySelector(".mesafe").value) || 0;
+      const cap = row.querySelector(".cap").value;
+      const atu = row.querySelector(".atu").value;
+      const debi = parseFloat(row.querySelector(".debi").value) || 0;
+
+      const key = `${cap}/${atu}`;
+      const icCap = icCapTablosu[key];
+
+      if (!icCap) {
+        alert(`İç çap bulunamadı: ${key}`);
+        return;
+      }
+
+      const icCapM = icCap / 1000;
+      const alan = Math.PI * Math.pow(icCapM / 2, 2);
+      const hiz = debi / 1000 / alan;
+
+      const yukKaybi = 6.815 * Math.pow(hiz / 150, 1.852) * Math.pow(icCapM, -1.167) * mesafe;
+      toplamYukKaybi += yukKaybi;
+
+      const piezoKot = ilkKot - toplamYukKaybi;
+      const isletmeBasinci = kot - piezoKot;
+
+      row.querySelector(".piezo").innerText = piezoKot.toFixed(2);
+      row.querySelector(".basinç").innerText = isletmeBasinci.toFixed(2);
+    });
+  }
+</script>
+
+</body>
+</html>
