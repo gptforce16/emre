@@ -111,11 +111,15 @@
       const alan = Math.PI * Math.pow(icCapM / 2, 2);
       const hiz = debi / 1000 / alan;
 
+      // Yük kaybı hesaplama
       const yukKaybi = 6.815 * Math.pow(hiz / 150, 1.852) * Math.pow(icCapM, -1.167) * mesafe;
       toplamYukKaybi += yukKaybi;
 
-      const piezoKot = ilkKot - toplamYukKaybi; // Piezo kotunun doğru hesaplanması
-      const isletmeBasinci = Math.max(0, kot - piezoKot); // Negatif sonucu engelle
+      // Piezometrik kotu hesaplama
+      const piezoKot = ilkKot - toplamYukKaybi;
+
+      // İşletme basıncı hesaplama (Piezometrik kot - Kot)
+      const isletmeBasinci = piezoKot - kot; // Düzeltilen hesaplama
 
       row.querySelector(".basinç").innerText = isletmeBasinci.toFixed(2);
     });
