@@ -219,6 +219,11 @@
       }
     }
 
+    // İşletme basıncı 2'den küçükse "Düşük Basınç" uyarısı ekle
+    if (isletme < 2) {
+      uyarı = "Düşük Basınç";
+    }
+
     data.push([
       debi, kot, mesafe,
       yukKaybi.toFixed(2),
