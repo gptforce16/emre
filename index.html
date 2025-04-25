@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Su Tesisleri Dairesi Başkanlığı Piezometre Hesaplama Tablosu</title>
+  <title>Debi ve İşletme Basıncı Hesaplama</title>
   <style>
     body {
       font-family: sans-serif;
@@ -73,18 +73,18 @@
   </style>
 </head>
 <body>
-  <h2>Su Tesisleri Dairesi Başkanlığı Piezometre Hesaplama Tablosu</h2>
+  <h2>Debi ve İşletme Basıncı Hesaplama</h2>
 
   <!-- Başlık Tablosu -->
   <table>
     <thead>
       <tr>
+        <th>Debi (L/s)</th>
         <th>Kot (m)</th>
         <th>Mesafe (m)</th>
         <th>Boru Çapı (mm)</th>
         <th>Atü (bar)</th>
-        <th>Debi (L/s)</th>
-        <th>İşletme Basıncı (bar)</th>
+        <th>İşletme Basıncı (m)</th>
       </tr>
     </thead>
     <tbody id="noktalarTablo">
@@ -118,6 +118,7 @@
 
       // Kot, mesafe, çap, atü ve debi kutucukları
       row.innerHTML = `
+        <td><input type="number" class="debi" value="${debiOnceki}" placeholder="Debi (L/s)" /></td>
         <td><input type="number" class="kot" placeholder="Kot (m)" /></td>
         <td><input type="number" class="mesafe" value="${tbody.children.length === 0 ? 0 : ''}" ${tbody.children.length === 0 ? 'readonly' : ''} /></td>
         <td><select class="boru">
@@ -139,7 +140,6 @@
           <option value="10" ${atuOnceki === '10' ? 'selected' : ''}>10</option>
           <option value="16" ${atuOnceki === '16' ? 'selected' : ''}>16</option>
         </select></td>
-        <td><input type="number" class="debi" value="${debiOnceki}" placeholder="Debi (L/s)" /></td>
         <td><input type="number" class="isletme" readonly /></td>
       `;
       tbody.appendChild(row);
@@ -173,8 +173,11 @@
         const piezometrikKot = kot - toplamYukKaybi;
         const isletmeBasinc = kot - piezometrikKot;
 
+        // İşletme basıncını metre cinsine çevirmek için bar'ı 0.1 ile çarpıyoruz
+        const isletmeBasincMetre = isletmeBasinc * 0.1;
+
         // Sonuçları ilgili hücrelere yazdırma
-        row.querySelector('.isletme').value = isletmeBasinc.toFixed(2);
+        row.querySelector('.isletme').value = isletmeBasincMetre.toFixed(2);
       });
     }
   </script>
