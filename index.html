@@ -2,9 +2,14 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>Su Tesisleri Dairesi Başkanlığı Piezometre Hesaplama Tablosu</title>
   <style>
+    /* Sayfa üzerindeki tüm öğelere yakınlaştırmayı engelle */
+    html, body {
+      touch-action: none;  /* Bu özellik mobil cihazlarda yakınlaştırmayı engeller */
+    }
+
     body {
       font-family: sans-serif;
       padding: 1rem;
@@ -18,13 +23,13 @@
       width: 100%;
       border-collapse: collapse;
       margin-bottom: 1rem;
-      table-layout: fixed;
+      table-layout: fixed; /* Tabloyu sabitle */
     }
     th, td {
       border: 1px solid #ccc;
       padding: 6px;
       text-align: center;
-      word-wrap: break-word;
+      word-wrap: break-word; /* Taşma olduğunda alt satıra geçsin */
     }
     th {
       background-color: #f4f4f4;
@@ -57,10 +62,12 @@
       display: none;
     }
 
+    /* Tablo sütun genişliklerini ayarlamak */
     th, td {
-      width: 16%;
+      width: 16%; /* Her sütun için genişlik ayarlıyoruz */
     }
 
+    /* Mobil uyumluluk için tabloyu kaydırılabilir yapma */
     @media (max-width: 768px) {
       table {
         display: block;
@@ -73,6 +80,7 @@
 <body>
   <h2>Su Tesisleri Dairesi Başkanlığı Piezometre Hesaplama Tablosu</h2>
 
+  <!-- Başlık Tablosu -->
   <table>
     <thead>
       <tr>
@@ -89,27 +97,34 @@
     </tbody>
   </table>
 
+  <!-- Nokta Ekle Butonu -->
   <button onclick="ekleNokta()">Nokta Ekle</button>
+
+  <!-- Hesaplama Butonu -->
   <button onclick="hesapla()">Hesapla</button>
 
   <script>
+    // Boru çapı/atü iç çap tablosu
     const boruTablosu = {
       "110": 96.8, "125": 110.2, "140": 123.4, "160": 141, "180": 158.6,
       "200": 176.2, "225": 198.2, "250": 220.4, "280": 246.8, "315": 277.6,
       "355": 312.8, "400": 352.6, "450": 396.6
     };
 
+    // Nokta ekleme fonksiyonu
     function ekleNokta() {
       const tbody = document.getElementById('noktalarTablo');
       const row = document.createElement('tr');
       
+      // Bir üstteki satırdan boru çapı, atü ve debi değerlerini almak
       const boruOnceki = tbody.children.length > 0 ? tbody.children[tbody.children.length - 1].querySelector('.boru').value : '110';
       const atuOnceki = tbody.children.length > 0 ? tbody.children[tbody.children.length - 1].querySelector('.atu').value : '10';
       const debiOnceki = tbody.children.length > 0 ? tbody.children[tbody.children.length - 1].querySelector('.debi').value : '';
 
+      // Kot, mesafe, çap, atü ve debi kutucukları
       row.innerHTML = `
-        <td><input type="text" class="debi" value="${debiOnceki}" placeholder="Debi (L/s)" oninput="degerKontrol(this)" /></td>
-        <td><input type="number" class="kot" placeholder="Kot (m)" oninput="degerKontrol(this)" /></td>
+        <td><input type="number" class="debi" value="${debiOnceki}" placeholder="Debi (L/s)" /></td>
+        <td><input type="number" class="kot" placeholder="Kot (m)" /></td>
         <td><input type="number" class="mesafe" value="${tbody.children.length === 0 ? 0 : ''}" ${tbody.children.length === 0 ? 'readonly' : ''} /></td>
         <td><select class="boru">
           <option value="110" ${boruOnceki === '110' ? 'selected' : ''}>110</option>
@@ -135,21 +150,7 @@
       tbody.appendChild(row);
     }
 
-    function degerKontrol(input) {
-      let value = input.value;
-      // Virgül karakterini nokta ile değiştir
-      value = value.replace(',', '.');
-      // Sadece sayı ve nokta tuşlarını kabul et
-      value = value.replace(/[^0-9.]/g, '');
-      
-      // Eğer değer noktayı içeriyorsa, sadece bir kez girmesine izin ver
-      if (value.split('.').length > 2) {
-        value = value.slice(0, value.lastIndexOf('.'));
-      }
-
-      input.value = value;
-    }
-
+    // Hesaplama fonksiyonu
     function hesapla() {
       const rows = document.querySelectorAll('#noktalarTablo tr');
       let toplamYukKaybi = 0;
@@ -161,19 +162,26 @@
         const debi = parseFloat(row.querySelector('.debi').value);
         const atü = parseFloat(row.querySelector('.atu').value);
 
+        // Boru çapı ve iç çapı hesaplama
         const icCap = boruTablosu[boruSecim];
 
+        // Hız hesaplaması (debi L/s, iç çap mm cinsinden)
         const hiz = debi / 1000 / (Math.PI * Math.pow(icCap / 1000 / 2, 2));
 
+        // Yük kaybı hesaplaması
         const yukKaybi = 6.815 * Math.pow((hiz / 150), 1.852) * Math.pow(icCap / 1000, -1.167) * mesafe;
 
+        // Kümülatif yük kaybı
         toplamYukKaybi += yukKaybi;
 
+        // Piezometrik kot ve işletme basıncı hesaplama
         const piezometrikKot = kot - toplamYukKaybi;
         const isletmeBasinc = kot - piezometrikKot;
 
+        // İşletme basıncını metre cinsine çevirmek için bar'ı 0.1 ile çarpıyoruz
         const isletmeBasincMetre = isletmeBasinc * 0.1;
 
+        // Sonuçları ilgili hücrelere yazdırma
         row.querySelector('.isletme').value = isletmeBasincMetre.toFixed(2);
       });
     }
