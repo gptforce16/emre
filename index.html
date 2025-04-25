@@ -243,7 +243,7 @@
   // Başlıkları stilize etme
   const headerStyle = {
     font: { bold: true, color: { rgb: 'FFFFFF' } },
-    alignment: { horizontal: 'center', vertical: 'center' },
+    alignment: { horizontal: 'center', vertical: 'center', wrapText: true },  // Metin kaydırma
     fill: { fgColor: { rgb: '4F81BD' } },
     border: {
       top: { style: 'thin' },
@@ -255,7 +255,7 @@
 
   // Verileri stilize etme
   const rowStyle = {
-    alignment: { horizontal: 'center' },
+    alignment: { horizontal: 'center', vertical: 'center' },  // Sütunları ortalama
     border: {
       top: { style: 'thin' },
       left: { style: 'thin' },
@@ -280,16 +280,8 @@
     }
   }
 
-  // Tüm sütun genişliklerini en geniş sütunla aynı yapma
-  const colWidths = data[0].map((_, colIndex) => {
-    let maxLength = data.reduce((max, row) => Math.max(max, String(row[colIndex]).length), 0);
-    return maxLength; // En uzun veriye göre genişlik ayarlama
-  });
-
-  const maxWidth = Math.max(...colWidths); // En geniş sütunun genişliğini al
-
-  // Bütün sütunlara bu en geniş genişliği uygula
-  ws['!cols'] = colWidths.map(() => ({ wch: maxWidth }));
+  // Tüm sütun genişliklerini 12.57 yapma
+  ws['!cols'] = Array(data[0].length).fill({ wch: 12.57 }); // Her sütunun genişliğini 12.57 olarak ayarlama
 
   XLSX.utils.book_append_sheet(wb, ws, "Piezometre Hesabı");
   XLSX.writeFile(wb, "piezometre_hesabi.xlsx");
