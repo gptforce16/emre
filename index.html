@@ -189,7 +189,7 @@
   const rows = document.querySelectorAll("#noktalarTablo tr");
   const ilkKot = parseFloat(rows[0]?.querySelector(".kot").value) || 0;
   let toplamYukKaybi = 0;
-  const data = [["Debi (L/s)", "Kot (m)", "Mesafe (m)", "Yük Kaybı", "Toplam Yük Kaybı", "Boru Çapı", "Atü", "Hız (m/s)", "İşletme Basıncı", "Uyarı"]];
+  const data = [["Debi (L/s)", "Kot (m)", "Mesafe (m)", "Yük Kaybı", "Toplam Yük Kaybı", "Boru Çapı", "Atü", "Hız (m/s)", "İşletme Basıncı", "Aparat"]];
   
   let oncekiKot = ilkKot;
 
@@ -207,15 +207,19 @@
     const piezoKot = ilkKot - toplamYukKaybi;
     const isletme = piezoKot - kot;
 
-    // Uyarı mantığı:
-    let uyarı = "";
+    // Aparat mantığı (kot farkı 0.5 metreden büyükse tahliye veya vantuz):
+    let aparat = "";
     if (i > 0) {
       const prevKot = parseFloat(rows[i - 1].querySelector(".kot").value) || 0;
       const nextKot = parseFloat(rows[i + 1]?.querySelector(".kot")?.value) || null;
 
       if (nextKot !== null) {
-        if (kot > prevKot && kot > nextKot) uyarı = "Vantuz";
-        if (kot < prevKot && kot < nextKot) uyarı = "Tahliye";
+        const farkPrevNext = Math.abs(prevKot - nextKot);
+        
+        if (farkPrevNext > 0.5) {
+          if (kot > prevKot && kot > nextKot) aparat = "Vantuz";
+          if (kot < prevKot && kot < nextKot) aparat = "Tahliye";
+        }
       }
     }
 
@@ -226,7 +230,7 @@
       cap, atu,
       hiz.toFixed(2),
       isletme.toFixed(2),
-      uyarı
+      aparat
     ]);
 
     oncekiKot = kot;
