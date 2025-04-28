@@ -102,6 +102,7 @@
         <th>Mesafe (m)</th>  
         <th>Boru Çapı (mm)</th>  
         <th>Atü (bar)</th>  
+        <th>Hız (m/s)</th>
         <th>İşletme Basıncı</th>  
       </tr>  
     </thead>  
@@ -338,8 +339,8 @@
     }
   }
 
-  // Tüm sütun genişliklerini 12.57 yapma
-  ws['!cols'] = Array(data[0].length).fill({ wch: 12.57 }); // Her sütunun genişliğini 12.57 olarak ayarlama
+  // Tüm sütun genişliklerini 12 yapma
+  ws['!cols'] = Array(data[0].length).fill({ wch: 12 }); // Her sütunun genişliğini 12 olarak ayarlama
 
   // Başlık metin kaydırmayı başlatma (yükseklik ayarı)
   for (let col = 0; col < data[0].length; col++) {
