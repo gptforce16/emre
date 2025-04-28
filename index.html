@@ -272,6 +272,7 @@
     const isletme = piezoKot - kot;
     const boruCap = parseFloat(cap); // Seçilen boru çapı
     const kocDarbesi = Math.sqrt((2100 * 1000) / (1 + 2.1 * ((icCap * 1000) / ((boruCap - (icCap * 1000)) / 2)))) * (hiz / (9.82 * 2)); 
+    const boruBasinci = ilkKot - kot + kocDarbesi;
 
     // Uyarı mantığı
     let uyarı = "";
@@ -297,7 +298,8 @@
       cap, atu,
       hiz.toFixed(2), 
       isletme.toFixed(2), 
-      kocDarbesi.toFixed(2),
+      kocDarbesi.toFixed(2), 
+      boruBasinci.tofixed(2), 
       uyarı
     ]);
 
