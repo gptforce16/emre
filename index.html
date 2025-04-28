@@ -103,7 +103,7 @@
         <th>Boru Çapı (mm)</th>  
         <th>Atü (bar)</th>  
         <th>Hız (m/s)</th>
-        <th>İşletme Basıncı</th>  
+        <th>İşletme Basıncı (m)</th>  
       </tr>  
     </thead>  
     <tbody id="noktalarTablo">  
@@ -254,7 +254,7 @@
   const rows = document.querySelectorAll("#noktalarTablo tr");
   const ilkKot = parseFloat(rows[0]?.querySelector(".kot").value) || 0;
   let toplamYukKaybi = 0;
-  const data = [["Debi (L/s)", "Kot (m)", "Mesafe (m)", "Yük Kaybı", "Toplam Yük Kaybı", "Boru Çapı", "Atü", "Hız (m/s)", "İşletme Basıncı (m)", "Koç Darbesi", "Boru Basıncı (m)", "Uyarı"]];
+  const data = [["Debi (L/s)", "Kot (m)", "Mesafe (m)", "Yük Kaybı (m)", "Toplam Yük Kaybı (m)", "Boru Çapı (mm)", "Atü (bar)", "Hız (m/s)", "İşletme Basıncı (m)", "Koç Darbesi", "Boru Basıncı (m)", "Uyarı"]];
   
   let oncekiKot = ilkKot;
 
