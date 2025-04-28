@@ -240,6 +240,7 @@
         toplamYukKaybi += yukKaybi;  
         const piezoKot = ilkKot - toplamYukKaybi;  
         const isletmeBasinci = piezoKot - kot;   
+        row.querySelector(".hiz").value = hiz.toFixed(2);  
         row.querySelector(".isletme").value = isletmeBasinci.toFixed(2);  
       });  
     }
