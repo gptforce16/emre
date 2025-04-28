@@ -263,10 +263,11 @@
     const mesafe = parseFloat(row.querySelector(".mesafe").value) || 0;
     const cap = row.querySelector(".boru").value;
     const atu = row.querySelector(".atu").value;
-    const icCap = boruTablosu[cap][atu] / 1000;
+    const icCapM = boruTablosu[cap][atu] / 1000;
+    const icCap = boruTablosu[cap][atu];
     const alan = Math.PI * Math.pow(icCap / 2, 2);
     const hiz = debi / 1000 / alan;
-    const yukKaybi = 6.815 * Math.pow(hiz / 150, 1.852) * Math.pow(icCap, -1.167) * mesafe;
+    const yukKaybi = 6.815 * Math.pow(hiz / 150, 1.852) * Math.pow(icCapM, -1.167) * mesafe;
     toplamYukKaybi += yukKaybi;
     const piezoKot = ilkKot - toplamYukKaybi;
     const isletme = piezoKot - kot;
