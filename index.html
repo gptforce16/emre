@@ -242,7 +242,8 @@
         const piezoKot = ilkKot - toplamYukKaybi;  
         const isletmeBasinci = piezoKot - kot;
         const boruCap = parseFloat(cap); // Seçilen boru çapı
-        const kocDarbesi = Math.sqrt((2100 * 1000) / (1 + 2.1 * (icCap / ((boruCap - icCap) / 2)))) * (hiz / (9.82 * 2))
+        const kocDarbesi = Math.sqrt((2100 * 1000) / (1 + 2.1 * (icCap / ((boruCap - icCap) / 2)))) * (hiz / (9.82 * 2));
+        const boruBasinci = ilkKot - kot + kocDarbesi;
         row.querySelector(".hiz").value = hiz.toFixed(2);  
         row.querySelector(".isletme").value = isletmeBasinci.toFixed(2);  
         
@@ -253,7 +254,7 @@
   const rows = document.querySelectorAll("#noktalarTablo tr");
   const ilkKot = parseFloat(rows[0]?.querySelector(".kot").value) || 0;
   let toplamYukKaybi = 0;
-  const data = [["Debi (L/s)", "Kot (m)", "Mesafe (m)", "Yük Kaybı", "Toplam Yük Kaybı", "Boru Çapı", "Atü", "Hız (m/s)", "İşletme Basıncı", "Koç Darbesi", "Uyarı"]];
+  const data = [["Debi (L/s)", "Kot (m)", "Mesafe (m)", "Yük Kaybı", "Toplam Yük Kaybı", "Boru Çapı", "Atü", "Hız (m/s)", "İşletme Basıncı (m)", "Koç Darbesi", "Boru Basıncı (m)", "Uyarı"]];
   
   let oncekiKot = ilkKot;
 
