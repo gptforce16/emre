@@ -310,7 +310,7 @@
   const ws = XLSX.utils.aoa_to_sheet(data);
   const wb = XLSX.utils.book_new();
   
-  // Başlıkları stilize etme
+  [15:40, 28.04.2025] Emre Mermutlu: // Başlıkları stilize etme
   const headerStyle = {
     font: { bold: true, color: { rgb: 'FFFFFF' } },
     alignment: { horizontal: 'center', vertical: 'center', wrapText: true },  // Metin kaydırma
@@ -336,38 +336,82 @@
 
   // Başlıkları stilize etme
   XLSX.utils.sheet_add_aoa(ws, [data[0]], { origin: "A1" });
-  ws['A1'].s = headerStyle;
-
-  // Verileri eklerken stil uygulama
-  for (let i = 1; i < data.length; i++) {
-    XLSX.utils.sheet_add_aoa(ws, [data[i]], { origin: `A${i + 1}` });
-    const row = ws[`A${i + 1}`];
-    row.s = rowStyle;
-
-    // "Düşük Basınç" uyarısı varsa, arka planı değiştirme
-    if (data[i][9] === "Düşük Basınç") {
-      ws[`A${i + 1}`].s.fill = { fgColor: { rgb: "FFCCCC" } };  // Koyu kırmızı arka plan
+  w…
+[15:48, 28.04.2025] Emre Mermutlu: // Başlıkları stilize etme
+const headerStyle = {
+    font: { bold: true, color: { rgb: 'FFFFFF' } },
+    alignment: { 
+        horizontal: 'center', 
+        vertical: 'center', 
+        wrapText: true // Metin kaydırmayı başlat
+    },
+    fill: { fgColor: { rgb: '4F81BD' } },
+    border: {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' }
     }
-  }
+};
 
-  // Tüm sütun genişliklerini 12 yapma
-  ws['!cols'] = Array(data[0].length).fill({ wch: 12 }); // Her sütunun genişliğini 12 olarak ayarlama
+// Verileri stilize etme
+const rowStyle = {
+    alignment: { 
+        horizontal: 'center', 
+        vertical: 'center'  // Veri satırları da ortalanacak
+    },
+    border: {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' }
+    }
+};
 
-  // Başlık metin kaydırmayı başlatma (yükseklik ayarı)
-  for (let col = 0; col < data[0].length; col++) {
+// Başlıkları stilize etme
+XLSX.utils.sheet_add_aoa(ws, [data[0]], { origin: "A1" });
+
+// Başlık hücresine stil uygulama
+for (let col = 0; col < data[0].length; col++) {
     const column = String.fromCharCode(65 + col); // A, B, C, ... gibi
-    const headerCell = ws[`${column}1`];
+    const headerCell = ws[${column}1];  // Başlık hücresine ulaşma
     if (headerCell) {
-      headerCell.s = headerStyle;
-      // Başlık hücresinin yüksekliğini artırarak kaydırmaya olanak sağlama
-      ws['!rows'] = ws['!rows'] || [];
-      ws['!rows'][0] = { hpt: 30 };  // Yüksekliği 30 olarak ayarlama
+        headerCell.s = headerStyle;  // Başlık stilini uygula
     }
-  }
+}
 
-  // Yeni stil ile dosyayı oluşturma
-  XLSX.utils.book_append_sheet(wb, ws, "Piezometre Hesabı");
-  XLSX.writeFile(wb, "piezometre_hesabi.xlsx");
+// Verileri eklerken stil uygulama
+for (let i = 1; i < data.length; i++) {
+    XLSX.utils.sheet_add_aoa(ws, [data[i]], { origin: A${i + 1} });
+
+    // Satır hücrelerini stilize etme
+    for (let col = 0; col < data[i].length; col++) {
+        const column = String.fromCharCode(65 + col); // A, B, C, ... gibi
+        const rowCell = ws[${column}${i + 1}];
+        if (rowCell) {
+            rowCell.s = rowStyle; // Veri satırlarına stil uygulama
+        }
+    }
+}
+
+// Tüm sütun genişliklerini 12 yapma
+ws['!cols'] = Array(data[0].length).fill({ wch: 12 }); // Her sütunun genişliğini 12 olarak ayarlama
+
+// Başlık metin kaydırmayı başlatma (yükseklik ayarı)
+for (let col = 0; col < data[0].length; col++) {
+    const column = String.fromCharCode(65 + col); // A, B, C, ... gibi
+    const headerCell = ws[${column}1];
+    if (headerCell) {
+        headerCell.s = headerStyle;
+        // Başlık hücresinin yüksekliğini artırarak kaydırmaya olanak sağlama
+        ws['!rows'] = ws['!rows'] || [];
+        ws['!rows'][0] = { hpt: 30 };  // Yüksekliği 30 olarak ayarlama
+    }
+}
+
+// Yeni stil ile dosyayı oluşturma
+XLSX.utils.book_append_sheet(wb, ws, "Piezometre Hesabı");
+XLSX.writeFile(wb, "piezometre_hesabi.xlsx");
 }
   </script>  
 </body>  
