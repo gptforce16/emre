@@ -2,16 +2,16 @@
 <html lang="tr">  
 <head>  
   <meta charset="UTF-8">  
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">  
+  <meta name="viewport" content="width=device-width, initial-scale=1">  
   <title>Su Tesisleri Dairesi Başkanlığı Piezometre Hesaplama Tablosu</title>  
   <style>  
     html, body {  
-      touch-action: none;  
+        
     }  
     body {  
       font-family: sans-serif;  
       padding: 1rem;  
-      max-width: 800px;  
+      max-width: 1000px;
       margin: auto;  
     }  
     h2 {
@@ -27,7 +27,7 @@
     }
     th, td {
       border: 1px solid #ccc;
-      padding: 6px;
+      padding: 3px;
       text-align: center;
       word-wrap: break-word;
       white-space: normal;
@@ -39,7 +39,7 @@
     }
     input, select {
       width: 100%;
-      padding: 6px;
+      padding: 3px;
       margin: 5px 0;
       box-sizing: border-box;
       border-radius: 5px;
@@ -47,8 +47,11 @@
       font-size: 11px;
     }
     button {
-      padding: 8px 12px;
-      margin-top: 10px;
+      flex:1; 
+      min-width: 80px; 
+      padding: 10px 8px;
+      margin-right: 4px;
+      margin-bottom: 10px;
       border-radius: 5px;
       background-color: #008CBA;
       color: white;
@@ -66,7 +69,7 @@
       background-image: none;
       width: 100%;
       max-width: 250px;
-      padding: 6px;
+      padding: 3px;
       margin: 5px 0;
       box-sizing: border-box;
       border-radius: 5px;
@@ -81,7 +84,7 @@
       display: none;
     }
     th, td {  
-      width: 16%;  
+      width: 14%;  
     }  
     @media (max-width: 768px) {  
       table {  
@@ -93,17 +96,47 @@
     
     /* Boru Çapı/Debi Tablosu için özel stil */
     .boru-debi-tablosu {
-      font-size: 11px;
+      font-size: 12px;
     }
     .boru-debi-tablosu th, 
     .boru-debi-tablosu td {
       padding: 4px;
-      font-size: 11px;
+      font-size: 12px;
+    }
+    
+    /* Grafik konteyner stili - YÜKSEKLİK ARTIRILDI */
+    .grafik-container {
+      margin-top: 10px;
+      width: 100%;
+      height: 400px; 
+      min-height: 400px;
+      padding-left: 5px;
+    }
+    
+    /* Buton grubu stili */
+    .button-group {
+      display: flex;
+      justify-content: space-between; 
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+    
+    /* Uyarı renkleri */
+    .vantuz {
+      background-color: #FFD700 !important;
+    }
+    .tahliye {
+      background-color: #87CEEB !important;
+    }
+    .dusuk-basinc {
+      background-color: #FFA07A !important;
     }
   </style>  
 </head>  
 <body>  
   <h2>Su Tesisleri Dairesi Başkanlığı Piezometre Hesaplama Tablosu</h2>  
+  
   <table>  
     <thead>  
       <tr>  
@@ -120,23 +153,31 @@
     </tbody>  
   </table>  
 
-  <button onclick="ekleNokta()">Nokta Ekle</button>
-  <button onclick="hesapla()">Hesapla</button>
-  <button onclick="exceleKaydet()">Excel'e Kaydet</button>
-<div>
-  <h3>Boru Çapı / Debi / Ağırlık Tablosu</h3>
-  <table class="boru-debi-tablosu">
-    <thead>
-      <tr>
-        <th>Boru Çapı / Atü</th>
-        <th>0,8 m/s Debi (l/s)</th>
-        <th>1,0 m/s Debi (l/s)</th>
-        <th>1,2 m/s Debi (l/s)</th>
-        <th>Ağırlık (kg/m)</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td>32 / 10</td><td>0,49</td><td>0,62</td><td>0,74</td><td>0,19</td></tr>
+  <div class="button-group">
+    <button onclick="ekleNokta()">Nokta Ekle</button>
+    <button onclick="hesapla()">Hesapla</button>
+    <button onclick="exceleKaydet()">Excel'e Kaydet</button>
+    <button onclick="grafikGoster()">Grafik</button>
+  </div>
+
+  <div class="grafik-container">
+    <canvas id="basincGrafik"></canvas>
+  </div>
+  
+  <div>
+    <h3>Boru Çapı / Debi / Ağırlık Tablosu</h3>
+    <table class="boru-debi-tablosu">
+      <thead>
+        <tr>
+          <th>Boru Çapı / Atü</th>
+          <th>0,8 m/s Debi (l/s)</th>
+          <th>1,0 m/s Debi (l/s)</th>
+          <th>1,2 m/s Debi (l/s)</th>
+          <th>Ağırlık (kg/m)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>32 / 10</td><td>0,49</td><td>0,62</td><td>0,74</td><td>0,19</td></tr>
       <tr><td>40 / 10</td><td>0,78</td><td>0,97</td><td>1,17</td><td>0,29</td></tr>
       <tr><td>50 / 10</td><td>1,22</td><td>1,52</td><td>1,82</td><td>0,45</td></tr>
       <tr><td>63 / 10</td><td>1,93</td><td>2,41</td><td>2,89</td><td>0,71</td></tr>
@@ -174,10 +215,12 @@
       <tr><td>355 / 16</td><td>53,03</td><td>66,29</td><td>79,55</td><td>32,47</td></tr>
       <tr><td>400 / 16</td><td>67,38</td><td>84,23</td><td>101,07</td><td>41,23</td></tr>
       <tr><td>450 / 16</td><td>85,18</td><td>106,47</td><td>127,76</td><td>52,21</td></tr>
-    </tbody>
-  </table>
-</div>
+      </tbody>
+    </table>
+  </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <script>  
     const boruTablosu = {
@@ -200,6 +243,14 @@
       "355": { "10": 312.8, "16": 290.6 },
       "400": { "10": 352.6, "16": 327.4 },
       "450": { "10": 396.6, "16": 368.2 }
+    };
+
+    let basincGrafik = null;
+    const grafikData = {
+      mesafeler: [],
+      kotDegerleri: [],
+      piezoKotlari: [],
+      uyarilar: []
     };
 
     function ekleNokta() {  
@@ -230,10 +281,17 @@
       const rows = document.querySelectorAll("#noktalarTablo tr");  
       let toplamYukKaybi = 0;  
       const ilkKot = parseFloat(rows[0].querySelector(".kot").value) || 0;  
+      let kumulatifMesafe = 0;
+      
+      grafikData.mesafeler = [];
+      grafikData.kotDegerleri = [];
+      grafikData.piezoKotlari = [];
+      grafikData.uyarilar = [];
   
       rows.forEach((row, i) => {  
         const kot = parseFloat(row.querySelector(".kot").value) || 0;  
         const mesafe = parseFloat(row.querySelector(".mesafe").value) || 0;  
+        kumulatifMesafe += mesafe;
         const cap = row.querySelector(".boru").value;  
         const atu = row.querySelector(".atu").value;  
         const debi = parseFloat(row.querySelector(".debi").value) || 0;  
@@ -252,27 +310,177 @@
         toplamYukKaybi += yukKaybi;  
         const piezoKot = ilkKot - toplamYukKaybi;  
         const isletmeBasinci = piezoKot - kot;
-        const boruCap = parseFloat(cap); // Seçilen boru çapı
-        const kocDarbesi = Math.sqrt((2100 * 1000) / (1 + 2.1 * (icCap / ((boruCap - icCap) / 2)))) * (hiz / (9.82 * 2));
-        const boruBasinci = ilkKot - kot + kocDarbesi;
+        
         row.querySelector(".hiz").value = hiz.toFixed(2);  
         row.querySelector(".isletme").value = isletmeBasinci.toFixed(2);  
         
+        let uyarı = "";
+        row.className = "";
+        
+        if (i > 0) {
+          const prevKot = parseFloat(rows[i - 1].querySelector(".kot").value) || 0;
+          const nextKot = parseFloat(rows[i + 1]?.querySelector(".kot")?.value) || null;
+
+          if (nextKot !== null) {
+            if (kot > prevKot && kot > nextKot) {
+              uyarı = "Vantuz";
+              row.classList.add("vantuz");
+            }
+            if (kot < prevKot && kot < nextKot) {
+              uyarı = "Tahliye";
+              row.classList.add("tahliye");
+            }
+          }
+        }
+
+        if (isletmeBasinci < 2) {
+          uyarı = "Düşük Basınç";
+          row.classList.add("dusuk-basinc");
+        }
+
+        grafikData.mesafeler.push(parseFloat(kumulatifMesafe.toFixed(2)));
+        grafikData.kotDegerleri.push(parseFloat(kot.toFixed(2)));
+        grafikData.piezoKotlari.push(parseFloat(piezoKot.toFixed(2)));
+        grafikData.uyarilar.push(uyarı);
       });  
+      
+      grafikGoster();
+    }
+
+    function grafikGoster() {
+      const ctx = document.getElementById('basincGrafik').getContext('2d');
+      
+      if (basincGrafik) {
+        basincGrafik.destroy();
+      }
+      
+      // Kot değerlerinden min ve max değerleri bul
+      const minKot = Math.min(...grafikData.kotDegerleri);
+      const maxKot = Math.max(...grafikData.kotDegerleri);
+      const minPiezo = Math.min(...grafikData.piezoKotlari);
+      const maxPiezo = Math.max(...grafikData.piezoKotlari);
+      
+      // Tüm değerler için genel min ve max bul
+      const genelMin = Math.min(minKot, minPiezo);
+      const genelMax = Math.max(maxKot, maxPiezo);
+      
+      // Y ekseni aralığını belirle (daha fazla marj ekleyerek)
+      const aralik = genelMax - genelMin;
+      const yMin = genelMin - aralik * 0.5; // %50 marj
+      const yMax = genelMax + aralik * 0.5; // %50 marj
+      
+      // Adım boyutunu belirle
+      const stepSize = Math.max(5, Math.round(aralik / 8));
+      
+      basincGrafik = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: grafikData.mesafeler.map(m => m.toString()),
+          datasets: [
+            {
+              label: 'Kot (m)',
+              data: grafikData.kotDegerleri,
+              borderColor: 'rgb(54, 162, 235)',
+              backgroundColor: 'rgba(54, 162, 235, 0.2)',
+              borderWidth: 2,
+              tension: 0.1,
+              pointBackgroundColor: grafikData.uyarilar.map(uyari => {
+                if (uyari === "Vantuz") return 'rgba(255, 215, 0, 0.7)';
+                if (uyari === "Tahliye") return 'rgba(135, 206, 235, 0.7)';
+                if (uyari === "Düşük Basınç") return 'rgba(255, 160, 122, 0.7)';
+                return 'rgba(54, 162, 235, 0.7)';
+              }),
+              pointRadius: 6,
+              pointHoverRadius: 8
+            },
+            {
+              label: 'Piezometre Kotu (m)',
+              data: grafikData.piezoKotlari,
+              borderColor: 'rgb(255, 99, 132)',
+              backgroundColor: 'rgba(255, 99, 132, 0.2)',
+              borderWidth: 2,
+              tension: 0.1,
+              borderDash: [5, 5],
+              pointRadius: 6,
+              pointHoverRadius: 8
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false, // En-boy oranını koruma özelliğini kapat
+          plugins: {
+            tooltip: {
+              callbacks: {
+                afterLabel: function(context) {
+                  const index = context.dataIndex;
+                  return grafikData.uyarilar[index] ? 'Uyarı: ' + grafikData.uyarilar[index] : '';
+                }
+              }
+            },
+            legend: {
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Kümülatif Mesafeye Göre Kot ve Piezometre Hattı',
+              font: {
+                size: 16
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: false,
+              min: yMin,
+              max: yMax,
+              title: {
+                display: true,
+                text: 'Kot (m)'
+              },
+              ticks: {
+                stepSize: stepSize
+              },
+              grid: {
+                drawOnChartArea: true,
+                color: 'rgba(0, 0, 0, 0.1)'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Kümülatif Mesafe (m)'
+              },
+              grid: {
+                drawOnChartArea: true,
+                color: 'rgba(0, 0, 0, 0.1)'
+              }
+            }
+          },
+          layout: {
+            padding: {
+              top: 20,
+              right: 20,
+              bottom: 20,
+              left: 10
+            }
+          }
+        }
+      });
     }
 
     function exceleKaydet() {
       const rows = document.querySelectorAll("#noktalarTablo tr");
       const ilkKot = parseFloat(rows[0]?.querySelector(".kot").value) || 0;
       let toplamYukKaybi = 0;
-      const data = [["Debi (L/s)", "Kot (m)", "Mesafe (m)", "Yük Kaybı (m)", "Toplam Yük Kaybı (m)", "Boru Çapı (mm)", "Atü (bar)", "Hız (m/s)", "İşletme Basıncı (m)", "Koç Darbesi", "Boru Basıncı (m)", "Uyarı"]];
+      let kumulatifMesafe = 0;
+      const data = [["Debi (L/s)", "Kot (m)", "Mesafe (m)", "Kümülatif Mesafe (m)", "Yük Kaybı (m)", "Toplam Yük Kaybı (m)", "Boru Çapı (mm)", "Atü (bar)", "Hız (m/s)", "İşletme Basıncı (m)", "Koç Darbesi", "Boru Basıncı (m)", "Uyarı"]];
       
-      let oncekiKot = ilkKot;
-
       rows.forEach((row, i) => {
         const debi = parseFloat(row.querySelector(".debi").value) || 0;
         const kot = parseFloat(row.querySelector(".kot").value) || 0;
         const mesafe = parseFloat(row.querySelector(".mesafe").value) || 0;
+        kumulatifMesafe += mesafe;
         const cap = row.querySelector(".boru").value;
         const atu = row.querySelector(".atu").value;
         const icCap = boruTablosu[cap][atu] / 1000;
@@ -282,11 +490,10 @@
         toplamYukKaybi += yukKaybi;
         const piezoKot = ilkKot - toplamYukKaybi;
         const isletme = piezoKot - kot;
-        const boruCap = parseFloat(cap); // Seçilen boru çapı
+        const boruCap = parseFloat(cap);
         const kocDarbesi = Math.sqrt((2100 * 1000) / (1 + 2.1 * ((icCap * 1000) / ((boruCap - (icCap * 1000)) / 2)))) * (hiz / (9.82 * 2)); 
         const boruBasinci = ilkKot - kot + kocDarbesi;
 
-        // Uyarı mantığı
         let uyarı = "";
         if (i > 0) {
           const prevKot = parseFloat(rows[i - 1].querySelector(".kot").value) || 0;
@@ -298,33 +505,33 @@
           }
         }
 
-        // İşletme basıncı 2'den küçükse "Düşük Basınç" uyarısı ekle
         if (isletme < 2) {
           uyarı = "Düşük Basınç";
         }
 
         data.push([
-          debi, kot, mesafe,
+          debi, 
+          kot, 
+          mesafe,
+          kumulatifMesafe.toFixed(2),
           yukKaybi.toFixed(2),
           toplamYukKaybi.toFixed(2),
-          cap, atu,
+          cap, 
+          atu,
           hiz.toFixed(2), 
           isletme.toFixed(2), 
           kocDarbesi.toFixed(2), 
           boruBasinci.toFixed(2), 
           uyarı
         ]);
-
-        oncekiKot = kot;
       });
 
       const ws = XLSX.utils.aoa_to_sheet(data);
       const wb = XLSX.utils.book_new();
       
-      // Başlıkları stilize etme
       const headerStyle = {
         font: { bold: true, color: { rgb: 'FFFFFF' } },
-        alignment: { horizontal: 'center', vertical: 'center', wrapText: true },  // Metin kaydırma
+        alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
         fill: { fgColor: { rgb: '4F81BD' } },
         border: {
           top: { style: 'thin' },
@@ -334,9 +541,8 @@
         }
       };
 
-      // Verileri stilize etme
       const rowStyle = {
-        alignment: { horizontal: 'center', vertical: 'center' },  // Sütunları ortalama
+        alignment: { horizontal: 'center', vertical: 'center' },
         border: {
           top: { style: 'thin' },
           left: { style: 'thin' },
@@ -345,41 +551,40 @@
         }
       };
 
-      // Başlıkları stilize etme
       XLSX.utils.sheet_add_aoa(ws, [data[0]], { origin: "A1" });
       ws['A1'].s = headerStyle;
 
-      // Verileri eklerken stil uygulama
       for (let i = 1; i < data.length; i++) {
         XLSX.utils.sheet_add_aoa(ws, [data[i]], { origin: `A${i + 1}` });
         const row = ws[`A${i + 1}`];
         row.s = rowStyle;
 
-        // "Düşük Basınç" uyarısı varsa, arka planı değiştirme
-        if (data[i][9] === "Düşük Basınç") {
-          ws[`A${i + 1}`].s.fill = { fgColor: { rgb: "FFCCCC" } };  // Koyu kırmızı arka plan
+        if (data[i][12] === "Vantuz") {
+          ws[`A${i + 1}`].s.fill = { fgColor: { rgb: "FFD700" } };
+        } else if (data[i][12] === "Tahliye") {
+          ws[`A${i + 1}`].s.fill = { fgColor: { rgb: "87CEEB" } };
+        } else if (data[i][12] === "Düşük Basınç") {
+          ws[`A${i + 1}`].s.fill = { fgColor: { rgb: "FFA07A" } };
         }
       }
 
-      // Tüm sütun genişliklerini 12 yapma
-      ws['!cols'] = Array(data[0].length).fill({ wch: 12 }); // Her sütunun genişliğini 12 olarak ayarlama
+      ws['!cols'] = [
+        { wch: 10 }, { wch: 10 }, { wch: 12 }, 
+        { wch: 12 }, { wch: 12 }, { wch: 12 },
+        { wch: 10 }, { wch: 10 }, { wch: 12 },
+        { wch: 12 }, { wch: 12 }, { wch: 15 }
+      ];
 
-      // Başlık metin kaydırmayı başlatma (yükseklik ayarı)
-      for (let col = 0; col < data[0].length; col++) {
-        const column = String.fromCharCode(65 + col); // A, B, C, ... gibi
-        const headerCell = ws[`${column}1`];
-        if (headerCell) {
-          headerCell.s = headerStyle;
-          // Başlık hücresinin yüksekliğini artırarak kaydırmaya olanak sağlama
-          ws['!rows'] = ws['!rows'] || [];
-          ws['!rows'][0] = { hpt: 30 };  // Yüksekliği 30 olarak ayarlama
-        }
-      }
+      ws['!rows'] = ws['!rows'] || [];
+      ws['!rows'][0] = { hpt: 30 };
 
-      // Yeni stil ile dosyayı oluşturma
       XLSX.utils.book_append_sheet(wb, ws, "Piezometre Hesabı");
       XLSX.writeFile(wb, "piezometre_hesabi.xlsx");
     }
+
+    window.onload = function() {
+      ekleNokta();
+    };
   </script>  
 </body>  
 </html>
