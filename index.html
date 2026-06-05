@@ -5,13 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">  
   <title>Piezometre Hesaplama Tablosu</title>  
   <style>  
-    html, body {  
-        
-    }  
     body {  
       font-family: sans-serif;  
       padding: 1rem;  
-      max-width: 1000px;
+      max-width: 1100px;
       margin: auto;  
     }  
     h2 {
@@ -76,13 +73,6 @@
       border: 1px solid #ddd;
       font-size: 12px;
     }
-    .output {
-      background: #f9f9f9;
-      font-weight: bold;
-    }
-    .hidden {
-      display: none;
-    }
     th, td {  
       width: 14%;  
     }  
@@ -94,7 +84,6 @@
       }  
     }
     
-    /* Boru Çapı/Debi Tablosu için özel stil */
     .boru-debi-tablosu {
       font-size: 12px;
     }
@@ -104,7 +93,6 @@
       font-size: 12px;
     }
     
-    /* Grafik konteyner stili - YÜKSEKLİK ARTIRILDI */
     .grafik-container {
       margin-top: 10px;
       width: 100%;
@@ -113,7 +101,6 @@
       padding-left: 5px;
     }
     
-    /* Buton grubu stili */
     .button-group {
       display: flex;
       justify-content: space-between; 
@@ -122,7 +109,6 @@
       margin-bottom: 10px;
     }
     
-    /* Uyarı renkleri */
     .vantuz {
       background-color: #FFD700 !important;
     }
@@ -131,6 +117,28 @@
     }
     .dusuk-basinc {
       background-color: #FFA07A !important;
+    }
+
+    .ai-panel {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f0f7f9;
+      border-left: 5px solid #008CBA;
+      border-radius: 4px;
+    }
+    .ai-panel h3 {
+      margin-top: 0;
+      color: #005A78;
+    }
+    .ai-output {
+      background: white;
+      padding: 10px;
+      border: 1px solid #d3e2e8;
+      border-radius: 4px;
+      min-height: 50px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #333;
     }
   </style>  
 </head>  
@@ -156,8 +164,14 @@
   <div class="button-group">
     <button onclick="ekleNokta()">Nokta Ekle</button>
     <button onclick="hesapla()">Hesapla</button>
+    <button onclick="optimizeEt()">Optimize Et</button>
     <button onclick="exceleKaydet()">Excel'e Kaydet</button>
-    <button onclick="grafikGoster()">Grafik</button>
+    <button onclick="yapayZekayaSor()" style="background-color: #4CAF50;">Yapay Zekaya Sor</button>
+  </div>
+
+  <div class="ai-panel">
+    <h3>🤖 Yapay Zeka Mühendislik Asistanı</h3>
+    <div id="aiRaporu" class="ai-output">Verileri girdikten sonra "Yapay Zekaya Sor" butonuna basarak hidrolik analizi başlatabilirsiniz.</div>
   </div>
 
   <div class="grafik-container">
@@ -178,48 +192,48 @@
       </thead>
       <tbody>
         <tr><td>32 / 10</td><td>0,49</td><td>0,62</td><td>0,74</td><td>0,93</td></tr>
-      <tr><td>40 / 10</td><td>0,78</td><td>0,97</td><td>1,17</td><td>1,46</td></tr>
-      <tr><td>50 / 10</td><td>1,22</td><td>1,52</td><td>1,82</td><td>2,28</td></tr>
-      <tr><td>63 / 10</td><td>1,93</td><td>2,41</td><td>2,89</td><td>3,62</td></tr>
-      <tr><td>75 / 10</td><td>2,74</td><td>3,42</td><td>4,10</td><td>5,13</td></tr>
-      <tr><td>90 / 10</td><td>3,94</td><td>4,92</td><td>5,91</td><td>7,38</td></tr>
-      <tr><td>110 / 10</td><td>5,89</td><td>7,36</td><td>8,83</td><td>11,04</td></tr>
-      <tr><td>125 / 10</td><td>7,63</td><td>9,54</td><td>11,45</td><td>14,31</td></tr>
-      <tr><td>140 / 10</td><td>9,57</td><td>11,96</td><td>14,35</td><td>17,94</td></tr>
-      <tr><td>160 / 10</td><td>12,49</td><td>15,61</td><td>18,73</td><td>23,42</td></tr>
-      <tr><td>180 / 10</td><td>15,81</td><td>19,76</td><td>23,71</td><td>29,64</td></tr>
-      <tr><td>200 / 10</td><td>19,5</td><td>24,37</td><td>29,24</td><td>36,56</td></tr>
-      <tr><td>225 / 10</td><td>24,66</td><td>30,83</td><td>36,99</td><td>46,25</td></tr>
-      <tr><td>250 / 10</td><td>30,54</td><td>38,17</td><td>45,8</td><td>57,26</td></tr>
-      <tr><td>280 / 10</td><td>38,26</td><td>47,82</td><td>57,38</td><td>71,73</td></tr>
-      <tr><td>315 / 10</td><td>48,45</td><td>60,56</td><td>72,67</td><td>90,84</td></tr>
-      <tr><td>355 / 10</td><td>61,42</td><td>76,77</td><td>92,13</td><td>115,16</td></tr>
-      <tr><td>400 / 10</td><td>77,98</td><td>97,47</td><td>117</td><td>146,21</td></tr>
-      <tr><td>450 / 10</td><td>98,76</td><td>123,45</td><td>148,14</td><td>185,18</td></tr>
-      <tr><td>32 / 16</td><td>0,42</td><td>0,53</td><td>0,64</td><td>0,80</td></tr>
-      <tr><td>40 / 16</td><td>0,67</td><td>0,83</td><td>1,00</td><td>1,25</td></tr>
-      <tr><td>50 / 16</td><td>1,05</td><td>1,31</td><td>1,57</td><td>1,97</td></tr>
-      <tr><td>63 / 16</td><td>1,66</td><td>2,07</td><td>2,49</td><td>3,11</td></tr>
-      <tr><td>75 / 16</td><td>2,37</td><td>2,96</td><td>3,55</td><td>4,44</td></tr>
-      <tr><td>90 / 16</td><td>3,40</td><td>4,25</td><td>5,10</td><td>6,38</td></tr>
-      <tr><td>110 / 16</td><td>5,09</td><td>6,36</td><td>7,63</td><td>9,54</td></tr>
-      <tr><td>125 / 16</td><td>6,56</td><td>8,20</td><td>9,84</td><td>12,30</td></tr>
-      <tr><td>140 / 16</td><td>8,25</td><td>10,31</td><td>12,37</td><td>15,47</td></tr>
-      <tr><td>160 / 16</td><td>10,75</td><td>13,44</td><td>16,13</td><td>20,16</td></tr>
-      <tr><td>180 / 16</td><td>13,61</td><td>17,01</td><td>20,41</td><td>25,52</td></tr>
-      <tr><td>200 / 16</td><td>16,82</td><td>21,02</td><td>25,22</td><td>31,53</td></tr>
-      <tr><td>225 / 16</td><td>21,27</td><td>26,59</td><td>31,91</td><td>39,89</td></tr>
-      <tr><td>250 / 16</td><td>26,29</td><td>32,86</td><td>39,43</td><td>49,29</td></tr>
-      <tr><td>280 / 16</td><td>33,01</td><td>41,26</td><td>49,51</td><td>61,89</td></tr>
-      <tr><td>315 / 16</td><td>41,74</td><td>52,18</td><td>62,62</td><td>78,27</td></tr>
-      <tr><td>355 / 16</td><td>53,03</td><td>66,29</td><td>79,55</td><td>99,44</td></tr>
-      <tr><td>400 / 16</td><td>67,38</td><td>84,23</td><td>101,07</td><td>126,35</td></tr>
-      <tr><td>450 / 16</td><td>85,18</td><td>106,47</td><td>127,76</td><td>159,71</td></tr>
+        <tr><td>40 / 10</td><td>0,78</td><td>0,97</td><td>1,17</td><td>1,46</td></tr>
+        <tr><td>50 / 10</td><td>1,22</td><td>1,52</td><td>1,82</td><td>2,28</td></tr>
+        <tr><td>63 / 10</td><td>1,93</td><td>2,41</td><td>2,89</td><td>3,62</td></tr>
+        <tr><td>75 / 10</td><td>2,74</td><td>3,42</td><td>4,10</td><td>5,13</td></tr>
+        <tr><td>90 / 10</td><td>3,94</td><td>4,92</td><td>5,91</td><td>7,38</td></tr>
+        <tr><td>110 / 10</td><td>5,89</td><td>7,36</td><td>8,83</td><td>11,04</td></tr>
+        <tr><td>125 / 10</td><td>7,63</td><td>9,54</td><td>11,45</td><td>14,31</td></tr>
+        <tr><td>140 / 10</td><td>9,57</td><td>11,96</td><td>14,35</td><td>17,94</td></tr>
+        <tr><td>160 / 10</td><td>12,49</td><td>15,61</td><td>18,73</td><td>23,42</td></tr>
+        <tr><td>180 / 10</td><td>15,81</td><td>19,76</td><td>23,71</td><td>29,64</td></tr>
+        <tr><td>200 / 10</td><td>19,5</td><td>24,37</td><td>29,24</td><td>36,56</td></tr>
+        <tr><td>225 / 10</td><td>24,66</td><td>30,83</td><td>36,99</td><td>46,25</td></tr>
+        <tr><td>250 / 10</td><td>30,54</td><td>38,17</td><td>45,8</td><td>57,26</td></tr>
+        <tr><td>280 / 10</td><td>38,26</td><td>47,82</td><td>57,38</td><td>71,73</td></tr>
+        <tr><td>315 / 10</td><td>48,45</td><td>60,56</td><td>72,67</td><td>90,84</td></tr>
+        <tr><td>355 / 10</td><td>61,42</td><td>76,77</td><td>92,13</td><td>115,16</td></tr>
+        <tr><td>400 / 10</td><td>77,98</td><td>97,47</td><td>117</td><td>146,21</td></tr>
+        <tr><td>450 / 10</td><td>98,76</td><td>123,45</td><td>148,14</td><td>185,18</td></tr>
+        <tr><td>32 / 16</td><td>0,42</td><td>0,53</td><td>0,64</td><td>0,80</td></tr>
+        <tr><td>40 / 16</td><td>0,67</td><td>0,83</td><td>1,00</td><td>1,25</td></tr>
+        <tr><td>50 / 16</td><td>1,05</td><td>1,31</td><td>1,57</td><td>1,97</td></tr>
+        <tr><td>63 / 16</td><td>1,66</td><td>2,07</td><td>2,49</td><td>3,11</td></tr>
+        <tr><td>75 / 16</td><td>2,37</td><td>2,96</td><td>3,55</td><td>4,44</td></tr>
+        <tr><td>90 / 16</td><td>3,40</td><td>4,25</td><td>5,10</td><td>6,38</td></tr>
+        <tr><td>110 / 16</td><td>5,09</td><td>6,36</td><td>7,63</td><td>9,54</td></tr>
+        <tr><td>125 / 16</td><td>6,56</td><td>8,20</td><td>9,84</td><td>12,30</td></tr>
+        <tr><td>140 / 16</td><td>8,25</td><td>10,31</td><td>12,37</td><td>15,47</td></tr>
+        <tr><td>160 / 16</td><td>10,75</td><td>13,44</td><td>16,13</td><td>20,16</td></tr>
+        <tr><td>180 / 16</td><td>13,61</td><td>17,01</td><td>20,41</td><td>25,52</td></tr>
+        <tr><td>200 / 16</td><td>16,82</td><td>21,02</td><td>25,22</td><td>31,53</td></tr>
+        <tr><td>225 / 16</td><td>21,27</td><td>26,59</td><td>31,91</td><td>39,89</td></tr>
+        <tr><td>250 / 16</td><td>26,29</td><td>32,86</td><td>39,43</td><td>49,29</td></tr>
+        <tr><td>280 / 16</td><td>33,01</td><td>41,26</td><td>49,51</td><td>61,89</td></tr>
+        <tr><td>315 / 16</td><td>41,74</td><td>52,18</td><td>62,62</td><td>78,27</td></tr>
+        <tr><td>355 / 16</td><td>53,03</td><td>66,29</td><td>79,55</td><td>99,44</td></tr>
+        <tr><td>400 / 16</td><td>67,38</td><td>84,23</td><td>101,07</td><td>126,35</td></tr>
+        <tr><td>450 / 16</td><td>85,18</td><td>106,47</td><td>127,76</td><td>159,71</td></tr>
       </tbody>
     </table>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <script>  
@@ -297,10 +311,7 @@
         const debi = parseFloat(row.querySelector(".debi").value) || 0;  
   
         const icCap = boruTablosu[cap][atu];  
-        if (!icCap) {  
-          alert(`İç çap bulunamadı: ${cap} - ${atu}`);  
-          return;  
-        }  
+        if (!icCap) return;  
   
         const icCapM = icCap / 1000;  
         const alan = Math.PI * Math.pow(icCapM / 2, 2);  
@@ -319,23 +330,21 @@
         
         if (i > 0) {
           const prevKot = parseFloat(rows[i - 1].querySelector(".kot").value) || 0;
-          const nextKot = parseFloat(rows[i + 1]?.querySelector(".kot")?.value) || null;
+          const nextKot = rows[i + 1] ? (parseFloat(rows[i + 1].querySelector(".kot").value) || 0) : null;
 
           if (nextKot !== null) {
-            if (kot > prevKot && kot > nextKot) {
-              uyarı = "Vantuz";
-              row.classList.add("vantuz");
-            }
-            if (kot < prevKot && kot < nextKot) {
-              uyarı = "Tahliye";
-              row.classList.add("tahliye");
-            }
+            if (kot > prevKot && kot > nextKot) { uyarı = "Vantuz"; row.classList.add("vantuz"); }
+            if (kot < prevKot && kot < nextKot) { uyarı = "Tahliye"; row.classList.add("tahliye"); }
+          } else {
+            if (kot > prevKot) { uyarı = "Vantuz"; row.classList.add("vantuz"); }
+            if (kot < prevKot) { uyarı = "Tahliye"; row.classList.add("tahliye"); }
           }
-        }
 
-        if (isletmeBasinci < 2) {
-          uyarı = "Düşük Basınç";
-          row.classList.add("dusuk-basinc");
+          if (isletmeBasinci < 2) {
+            uyarı = "Düşük Basınç";
+            row.className = ""; 
+            row.classList.add("dusuk-basinc");
+          }
         }
 
         grafikData.mesafeler.push(parseFloat(kumulatifMesafe.toFixed(2)));
@@ -347,29 +356,169 @@
       grafikGoster();
     }
 
+    // GÜNCEL OPTİMİZASYON ALGORİTMASI: Hızı sınıra yaslamak yerine en ideal aralık olan ~1.0 m/s'ye yaklaştırır.
+    function optimizeEt() {
+      const rows = document.querySelectorAll("#noktalarTablo tr");
+      if (rows.length === 0) return;
+
+      const ilkKot = parseFloat(rows[0].querySelector(".kot").value) || 0;
+      const capDizisi = Object.keys(boruTablosu).map(Number).sort((a,b)=>a-b);
+
+      // 1. ADIM: Hattaki maksimum debiyi bul
+      let maksDebi = 0;
+      rows.forEach(row => {
+        const debi = parseFloat(row.querySelector(".debi").value) || 0;
+        if (debi > maksDebi) maksDebi = debi;
+      });
+
+      if (maksDebi <= 0) return;
+
+      // 2. ADIM: Maksimum debide hızı 1.0 m/s ideal değerine EN YAKIN yapan çapı seç (Sınırda boğulmayı engeller)
+      let secilenSabitCap = "110";
+      let enKucukHizFarki = Infinity;
+
+      for (let i = 0; i < capDizisi.length; i++) {
+        const testCap = capDizisi[i].toString();
+        const icCapM = boruTablosu[testCap]["10"] / 1000;
+        const alan = Math.PI * Math.pow(icCapM / 2, 2);
+        const hiz = maksDebi / 1000 / alan;
+        
+        // 0.6 ile 1.3 m/s aralığındaki mühendislik opsiyonlarını tart, 1.0 m/s'ye olan mesafeyi ölç
+        let fark = Math.abs(hiz - 1.0);
+        if (fark < enKucukHizFarki && hiz <= 1.35) { 
+          enKucukHizFarki = fark;
+          secilenSabitCap = testCap;
+        }
+      }
+
+      // 3. ADIM: Sabitlenen çapa göre kümülatif basınca bakıp ATÜ (PN10/PN16) sınıflandırmasını yap
+      let mevcutToplamYukKaybi = 0;
+      
+      rows.forEach((row, i) => {
+        row.querySelector(".boru").value = secilenSabitCap;
+
+        if (i === 0) return;
+
+        const debi = parseFloat(row.querySelector(".debi").value) || 0;
+        const kot = parseFloat(row.querySelector(".kot").value) || 0;
+        const mesafe = parseFloat(row.querySelector(".mesafe").value) || 0;
+
+        let icCapM = boruTablosu[secilenSabitCap]["10"] / 1000;
+        let alan = Math.PI * Math.pow(icCapM / 2, 2);
+        let hiz = debi / 1000 / alan;
+        let yk = 6.815 * Math.pow(hiz / 150, 1.852) * Math.pow(icCapM, -1.167) * mesafe;
+        
+        let tahminiPiezo = ilkKot - (mevcutToplamYukKaybi + yk);
+        let tahminiIsletmeBasinciM = tahminiPiezo - kot;
+        
+        let kocDarbesi = Math.sqrt((2100 * 1000) / (1 + 2.1 * ((icCapM * 1000) / ((parseFloat(secilenSabitCap) - (icCapM * 1000)) / 2)))) * (hiz / (9.81 * 2));
+        let toplamBoruBasinciBar = (tahminiIsletmeBasinciM + kocDarbesi) / 10;
+
+        // Toplam boru yükü 10 barı geçerse otomatik olarak PN16 seçilir.
+        if (toplamBoruBasinciBar > 10) {
+          row.querySelector(".atu").value = "16";
+          icCapM = boruTablosu[secilenSabitCap]["16"] / 1000;
+          alan = Math.PI * Math.pow(icCapM / 2, 2);
+          hiz = debi / 1000 / alan;
+          yk = 6.815 * Math.pow(hiz / 150, 1.852) * Math.pow(icCapM, -1.167) * mesafe;
+        } else {
+          row.querySelector(".atu").value = "10";
+        }
+
+        mevcutToplamYukKaybi += yk;
+      });
+
+      if (rows.length > 1) {
+        rows[0].querySelector(".atu").value = rows[1].querySelector(".atu").value;
+      }
+
+      hesapla();
+    }
+
+    function yapayZekayaSor() {
+      const rows = document.querySelectorAll("#noktalarTablo tr");
+      if (rows.length === 0) {
+        document.getElementById("aiRaporu").innerText = "Lütfen önce analiz edilecek noktalar ekleyin.";
+        return;
+      }
+
+      hesapla(); 
+
+      let rapor = "🔍 <b>HİDROLİK ANALİZ RAPORU VE MÜHENDİSLİK TAVSİYELERİ:</b><br><br>";
+      let sorunSayisi = 0;
+      let toplamMesafe = grafikData.mesafeler[grafikData.mesafeler.length - 1] || 0;
+      
+      let yuksekHizNoktalari = [];
+      let dusukHizNoktalari = [];
+      let kritikBasincNoktalari = [];
+      let atuAsimNoktalari = [];
+      let vantuzSayisi = 0;
+      let tahliyeSayisi = 0;
+
+      rows.forEach((row, i) => {
+        const hiz = parseFloat(row.querySelector(".hiz").value) || 0;
+        const isletme = parseFloat(row.querySelector(".isletme").value) || 0;
+        const cap = row.querySelector(".boru").value;
+        const atu = parseInt(row.querySelector(".atu").value) || 10;
+        const uyari = grafikData.uyarilar[i];
+
+        const icCap = boruTablosu[cap][atu.toString()] / 1000;
+        const boruCap = parseFloat(cap);
+        const kocDarbesi = Math.sqrt((2100 * 1000) / (1 + 2.1 * ((icCap * 1000) / ((boruCap - (icCap * 1000)) / 2)))) * (hiz / (9.81 * 2)); 
+        const toplamPikBasincBar = (isletme + kocDarbesi) / 10;
+
+        if (hiz > 1.5) yuksekHizNoktalari.push(`Nokta ${i+1} (${hiz} m/s)`);
+        if (hiz < 0.6 && hiz > 0) dusukHizNoktalari.push(`Nokta ${i+1} (${hiz} m/s)`);
+        if (isletme < 2 && i > 0) kritikBasincNoktalari.push(`Nokta ${i+1} (${isletme} m)`);
+        if (toplamPikBasincBar > atu && i > 0) atuAsimNoktalari.push(`Nokta ${i+1} (Maks Basınç: ${toplamPikBasincBar.toFixed(1)} bar > PN ${atu})`);
+        if (uyari === "Vantuz") vantuzSayisi++;
+        if (uyari === "Tahliye") tahliyeSayisi++;
+      });
+
+      rapor += `• Toplam hat uzunluğu <b>${toplamMesafe} metre</b> olarak hesaplanmıştır.<br>`;
+
+      if (atuAsimNoktalari.length > 0) {
+        rapor += `🚨 <b>Boru Patlama / ATÜ Yetersizlik Riski:</b> ${atuAsimNoktalari.join(", ")} kısımlarında işletme ve koç darbesi toplamı dayanım sınırını aşmaktadır. Bu alanlarda <b>ATÜ değerini 16 bar (PN16) yapmalısınız</b>.<br>`;
+        sorunSayisi++;
+      }
+
+      if (yuksekHizNoktalari.length > 0) {
+        rapor += `⚠️ <b>Aşırı Hız Riski:</b> ${yuksekHizNoktalari.join(", ")} kısımlarında akış hızı limit değer olan 1.5 m/s'yi aşmıştır. Çapı büyütmeniz önerilir.<br>`;
+        sorunSayisi++;
+      }
+      if (dusukHizNoktalari.length > 0) {
+        rapor += `⚠️ <b>Çökelme Riski:</b> ${dusukHizNoktalari.join(", ")} kısımlarında akış hızı 0.6 m/s'nin altına düşmüştür.<br>`;
+        sorunSayisi++;
+      }
+
+      if (kritikBasincNoktalari.length > 0) {
+        rapor += `🚨 <b>Kritik Düşük Basınç:</b> ${kritikBasincNoktalari.join(", ")} noktalarında işletme basıncı emniyet sınırı olan 2 metrenin altına düşmüştür.<br>`;
+        sorunSayisi++;
+      }
+
+      if (vantuzSayisi > 0 || tahliyeSayisi > 0) {
+        rapor += `⚙️ <b>Armatür Yerleşimi:</b> Profil geometrisine göre hat üzerinde <b>${vantuzSayisi} adet Vantuz</b> ve <b>${tahliyeSayisi} adet Tahliye</b> yeri tespit edilmiştir. Sarı ve mavi renkli bu mekanik noktalara sanat yapıları projelendirilmelidir.<br>`;
+      }
+
+      if (sorunSayisi === 0) {
+        rapor += `✅ <b>Mükemmel Tasarım:</b> Sabit çap kuralına göre hat hidrolik olarak mükemmel kararlı çalışmaktadır.`;
+      }
+
+      document.getElementById("aiRaporu").innerHTML = rapor;
+    }
+
     function grafikGoster() {
       const ctx = document.getElementById('basincGrafik').getContext('2d');
-      
-      if (basincGrafik) {
-        basincGrafik.destroy();
-      }
-      
-      // Kot değerlerinden min ve max değerleri bul
+      if (basincGrafik) { basincGrafik.destroy(); }
       const minKot = Math.min(...grafikData.kotDegerleri);
       const maxKot = Math.max(...grafikData.kotDegerleri);
       const minPiezo = Math.min(...grafikData.piezoKotlari);
       const maxPiezo = Math.max(...grafikData.piezoKotlari);
-      
-      // Tüm değerler için genel min ve max bul
       const genelMin = Math.min(minKot, minPiezo);
       const genelMax = Math.max(maxKot, maxPiezo);
-      
-      // Y ekseni aralığını belirle (daha fazla marj ekleyerek)
       const aralik = genelMax - genelMin;
-      const yMin = genelMin - aralik * 0.5; // %50 marj
-      const yMax = genelMax + aralik * 0.5; // %50 marj
-      
-      // Adım boyutunu belirle
+      const yMin = genelMin - aralik * 0.5; 
+      const yMax = genelMax + aralik * 0.5; 
       const stepSize = Math.max(5, Math.round(aralik / 8));
       
       basincGrafik = new Chart(ctx, {
@@ -408,7 +557,7 @@
         },
         options: {
           responsive: true,
-          maintainAspectRatio: false, // En-boy oranını koruma özelliğini kapat
+          maintainAspectRatio: false,
           plugins: {
             tooltip: {
               callbacks: {
@@ -418,168 +567,129 @@
                 }
               }
             },
-            legend: {
-              position: 'top',
-            },
-            title: {
-              display: true,
-              text: 'Kümülatif Mesafeye Göre Kot ve Piezometre Hattı',
-              font: {
-                size: 16
-              }
-            }
+            legend: { position: 'top' },
+            title: { display: true, text: 'Kümülatif Mesafeye Göre Kot ve Piezometre Hattı', font: { size: 16 } }
           },
           scales: {
-            y: {
-              beginAtZero: false,
-              min: yMin,
-              max: yMax,
-              title: {
-                display: true,
-                text: 'Kot (m)'
-              },
-              ticks: {
-                stepSize: stepSize
-              },
-              grid: {
-                drawOnChartArea: true,
-                color: 'rgba(0, 0, 0, 0.1)'
-              }
-            },
-            x: {
-              title: {
-                display: true,
-                text: 'Kümülatif Mesafe (m)'
-              },
-              grid: {
-                drawOnChartArea: true,
-                color: 'rgba(0, 0, 0, 0.1)'
-              }
-            }
+            y: { beginAtZero: false, min: yMin, max: yMax, title: { display: true, text: 'Kot (m)' }, ticks: { stepSize: stepSize }, grid: { drawOnChartArea: true, color: 'rgba(0, 0, 0, 0.1)' } },
+            x: { title: { display: true, text: 'Kümülatif Mesafe (m)' }, grid: { drawOnChartArea: true, color: 'rgba(0, 0, 0, 0.1)' } }
           },
-          layout: {
-            padding: {
-              top: 20,
-              right: 20,
-              bottom: 20,
-              left: 10
-            }
-          }
+          layout: { padding: { top: 20, right: 20, bottom: 20, left: 10 } }
         }
       });
     }
 
     function exceleKaydet() {
       const rows = document.querySelectorAll("#noktalarTablo tr");
-      const ilkKot = parseFloat(rows[0]?.querySelector(".kot").value) || 0;
-      let toplamYukKaybi = 0;
-      let kumulatifMesafe = 0;
-      const data = [["Debi (L/s)", "Kot (m)", "Mesafe (m)", "Kümülatif Mesafe (m)", "Yük Kaybı (m)", "Toplam Yük Kaybı (m)", "Boru Çapı (mm)", "Atü (bar)", "Hız (m/s)", "İşletme Basıncı (m)", "Koç Darbesi", "Boru Basıncı (m)", "Uyarı"]];
-      
+      if (rows.length === 0) return;
+
+      const wb = XLSX.utils.book_new();
+      const ws_data = [];
+
+      const headers = [
+        "Debi (L/s)", "Kot (m)", "Mesafe (m)", "Kümülatif Mesafe (m)", 
+        "Boru Çapı (mm)", "Atü (bar)", "İç Çap (mm)", 
+        "Hız (m/s)", "Yük Kaybı (m)", "Küm. Yük Kaybı (m)", 
+        "Piezometre Kotu (m)", "İşletme Basıncı (m)", "Koç Darbesi (m)", 
+        "Boru Basıncı (bar)", "Uyarı"
+      ];
+      ws_data.push(headers);
+
       rows.forEach((row, i) => {
         const debi = parseFloat(row.querySelector(".debi").value) || 0;
         const kot = parseFloat(row.querySelector(".kot").value) || 0;
         const mesafe = parseFloat(row.querySelector(".mesafe").value) || 0;
-        kumulatifMesafe += mesafe;
         const cap = row.querySelector(".boru").value;
         const atu = row.querySelector(".atu").value;
-        const icCap = boruTablosu[cap][atu] / 1000;
-        const alan = Math.PI * Math.pow(icCap / 2, 2);
-        const hiz = debi / 1000 / alan;
-        const yukKaybi = 6.815 * Math.pow(hiz / 150, 1.852) * Math.pow(icCap, -1.167) * mesafe;
-        toplamYukKaybi += yukKaybi;
-        const piezoKot = ilkKot - toplamYukKaybi;
-        const isletme = piezoKot - kot;
-        const boruCap = parseFloat(cap);
-        const kocDarbesi = Math.sqrt((2100 * 1000) / (1 + 2.1 * ((icCap * 1000) / ((boruCap - (icCap * 1000)) / 2)))) * (hiz / (9.82 * 2)); 
-        const boruBasinci = ilkKot - kot + kocDarbesi;
+        const icCap = boruTablosu[cap][atu];
 
-        let uyarı = "";
-        if (i > 0) {
-          const prevKot = parseFloat(rows[i - 1].querySelector(".kot").value) || 0;
-          const nextKot = parseFloat(rows[i + 1]?.querySelector(".kot")?.value) || null;
+        const R = i + 2; 
 
-          if (nextKot !== null) {
-            if (kot > prevKot && kot > nextKot) uyarı = "Vantuz";
-            if (kot < prevKot && kot < nextKot) uyarı = "Tahliye";
-          }
-        }
+        const fKumMesafe = (i === 0) ? `0` : `=C${R}+D${R-1}`;
+        const fHiz = `=A${R}/(3.14159265*POWER(G${R}/1000,2)/4)/1000`;
+        const fYukKaybi = `=6.815*POWER(H${R}/150,1.852)*POWER(G${R}/1000,-1.167)*C${R}`;
+        const fKumYukKaybi = (i === 0) ? `=I${R}` : `=I${R}+J${R-1}`;
+        const fPiezoKot = `=B$2-J${R}`; 
+        const fIsletmeBasinci = `=K${R}-B${R}`;
+        const fKocDarbesi = `=SQRT((2100*1000)/(1+2.1*(G${R}/((E${R}-G${R})/2))))*(H${R}/(9.81*2))`;
+        const fToplamBasinc = `=(L${R}+M${R})/10`;
 
-        if (isletme < 2) {
-          uyarı = "Düşük Basınç";
-        }
+        let uyari = grafikData.uyarilar[i] || "";
 
-        data.push([
-          debi, 
-          kot, 
-          mesafe,
-          kumulatifMesafe.toFixed(2),
-          yukKaybi.toFixed(2),
-          toplamYukKaybi.toFixed(2),
-          cap, 
-          atu,
-          hiz.toFixed(2), 
-          isletme.toFixed(2), 
-          kocDarbesi.toFixed(2), 
-          boruBasinci.toFixed(2), 
-          uyarı
+        ws_data.push([
+          debi, kot, mesafe, 
+          { f: fKumMesafe }, 
+          parseInt(cap), parseInt(atu), icCap, 
+          { f: fHiz }, { f: fYukKaybi }, { f: fKumYukKaybi }, 
+          { f: fPiezoKot }, { f: fIsletmeBasinci }, 
+          { f: fKocDarbesi }, { f: fToplamBasinc },
+          uyari
         ]);
       });
 
-      const ws = XLSX.utils.aoa_to_sheet(data);
-      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet(ws_data);
+
+      const thinBorder = { style: 'thin', color: { rgb: 'BFBFBF' } };
+      const borderStyle = { top: thinBorder, bottom: thinBorder, left: thinBorder, right: thinBorder };
       
       const headerStyle = {
-        font: { bold: true, color: { rgb: 'FFFFFF' } },
+        font: { bold: true, color: { rgb: 'FFFFFF' }, size: 11 },
         alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
-        fill: { fgColor: { rgb: '4F81BD' } },
-        border: {
-          top: { style: 'thin' },
-          left: { style: 'thin' },
-          bottom: { style: 'thin' },
-          right: { style: 'thin' }
-        }
+        fill: { fgColor: { rgb: '1F4E78' } }, 
+        border: borderStyle
       };
 
-      const rowStyle = {
-        alignment: { horizontal: 'center', vertical: 'center' },
-        border: {
-          top: { style: 'thin' },
-          left: { style: 'thin' },
-          bottom: { style: 'thin' },
-          right: { style: 'thin' }
-        }
-      };
+      const centerStyle = { alignment: { horizontal: 'center', vertical: 'center' }, border: borderStyle, font: { size: 10 } };
+      const rightStyle = { alignment: { horizontal: 'right', vertical: 'center' }, border: borderStyle, font: { size: 10 } };
 
-      XLSX.utils.sheet_add_aoa(ws, [data[0]], { origin: "A1" });
-      ws['A1'].s = headerStyle;
+      const range = XLSX.utils.decode_range(ws['!ref']);
+      for (let R = range.s.r; R <= range.e.r; ++R) {
+        for (let C = range.s.c; C <= range.e.c; ++C) {
+          const cell_ref = XLSX.utils.encode_cell({ r: R, c: C });
+          if (!ws[cell_ref]) continue;
 
-      for (let i = 1; i < data.length; i++) {
-        XLSX.utils.sheet_add_aoa(ws, [data[i]], { origin: `A${i + 1}` });
-        const row = ws[`A${i + 1}`];
-        row.s = rowStyle;
+          if (R === 0) {
+            ws[cell_ref].s = headerStyle;
+            continue;
+          }
 
-        if (data[i][12] === "Vantuz") {
-          ws[`A${i + 1}`].s.fill = { fgColor: { rgb: "FFD700" } };
-        } else if (data[i][12] === "Tahliye") {
-          ws[`A${i + 1}`].s.fill = { fgColor: { rgb: "87CEEB" } };
-        } else if (data[i][12] === "Düşük Basınç") {
-          ws[`A${i + 1}`].s.fill = { fgColor: { rgb: "FFA07A" } };
+          let baseStyle = (C >= 14 || C === 4 || C === 5) ? { ...centerStyle } : { ...rightStyle };
+          
+          if (C === 3 || C === 7 || C === 8 || C === 9 || C === 10 || C === 11 || C === 12 || C === 13) {
+            ws[cell_ref].z = "0.00";
+          }
+
+          const uyariYazisi = ws[XLSX.utils.encode_cell({ r: R, c: 14 })]?.v || "";
+          if (uyariYazisi === "Vantuz") {
+            baseStyle.fill = { fgColor: { rgb: 'FFF2CC' } }; 
+          } else if (uyariYazisi === "Tahliye") {
+            baseStyle.fill = { fgColor: { rgb: 'DDEBF7' } }; 
+          } else if (uyariYazisi === "Düşük Basınç") {
+            baseStyle.fill = { fgColor: { rgb: 'FCE4D6' } }; 
+          }
+
+          ws[cell_ref].s = baseStyle;
         }
       }
 
       ws['!cols'] = [
-        { wch: 10 }, { wch: 10 }, { wch: 12 }, 
-        { wch: 12 }, { wch: 12 }, { wch: 12 },
-        { wch: 10 }, { wch: 10 }, { wch: 12 },
-        { wch: 12 }, { wch: 12 }, { wch: 15 }
+        { wch: 11 }, { wch: 10 }, { wch: 12 }, { wch: 18 },
+        { wch: 14 }, { wch: 10 }, { wch: 11 }, { wch: 11 },
+        { wch: 12 }, { wch: 16 }, { wch: 18 }, { wch: 18 },
+        { wch: 15 }, { wch: 22 }, { wch: 14 }
       ];
 
-      ws['!rows'] = ws['!rows'] || [];
-      ws['!rows'][0] = { hpt: 30 };
+      ws['!cols'] = [
+        { wch: 11 }, { wch: 10 }, { wch: 12 }, { wch: 18 },
+        { wch: 14 }, { wch: 10 }, { wch: 11 }, { wch: 11 },
+        { wch: 12 }, { wch: 16 }, { wch: 18 }, { wch: 18 },
+        { wch: 15 }, { wch: 22 }, { wch: 14 }
+      ];
 
-      XLSX.utils.book_append_sheet(wb, ws, "Piezometre Hesabı");
-      XLSX.writeFile(wb, "piezometre_hesabi.xlsx");
+      ws['!rows'] = [{ hpt: 26 }];
+
+      XLSX.utils.book_append_sheet(wb, ws, "Hidrolik Hesap");
+      XLSX.writeFile(wb, "formullu_piezometre_hesabi.xlsx");
     }
 
     window.onload = function() {
