@@ -356,7 +356,7 @@
       grafikGoster();
     }
 
-    // GÜNCEL OPTİMİZASYON ALGORİTMASI: Her noktanın kendi debisine göre ~1.0 m/s hızı sağlayacak dinamik çap seçimi yapar.
+    // GÜNCEL OPTİMİZASYON ALGORİTMASI: İlk nokta dahil, her noktanın kendi debisine göre ~1.0 m/s hızı sağlayacak dinamik çap seçimi yapar.
     function optimizeEt() {
       const rows = document.querySelectorAll("#noktalarTablo tr");
       if (rows.length === 0) return;
@@ -373,7 +373,7 @@
 
         let secilenCap = "110"; 
         
-        // DEBİYE GÖRE ÇAP SEÇİMİ (Her Satır İçin Ayrı)
+        // DEBİYE GÖRE ÇAP SEÇİMİ (Her Satır Kendi Değerini Alır)
         if (debi > 0) {
           let enKucukHizFarki = Infinity;
           for (let j = 0; j < capDizisi.length; j++) {
@@ -421,12 +421,6 @@
 
         mevcutToplamYukKaybi += yk;
       });
-
-      // İlk noktanın çap ve basınç değerlerini başlangıç koşulu olarak ilk hesaplanan (ikinci) boruya eşitliyoruz
-      if (rows.length > 1) {
-        rows[0].querySelector(".atu").value = rows[1].querySelector(".atu").value;
-        rows[0].querySelector(".boru").value = rows[1].querySelector(".boru").value;
-      }
 
       hesapla();
     }
